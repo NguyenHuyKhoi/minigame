@@ -2,11 +2,11 @@ export default [
     {
         'game_id':0,
         'round_number':2,
+        'team_number':2,
         'join_code':'23123',
         'current_round_index':0,
         'chats':[
             {
-                'chat_index':0,
                 'chat_type':'team',
                 'team_index':0,
                 'messages':[
@@ -25,7 +25,6 @@ export default [
                 ]
             },
             {
-                'chat_index':1,
                 'chat_type':'team',
                 'team_index':1,
                 'messages':[
@@ -44,7 +43,6 @@ export default [
                 ]
             },
             {
-                'chat_index':2,
                 'chat_type':'all',
                 'team_index':-1,
                 'messages':[

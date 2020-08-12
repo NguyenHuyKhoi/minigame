@@ -1,9 +1,10 @@
 import firestore from '@react-native-firebase/firestore'
-import chatStore from '../stores/chat.store';
+// import chatStore from '../stores/chat.store';
 import userStore from '../stores/user.store';
 import { get } from 'mobx';
-import { teamAStore, teamBStore } from '../stores/team.store';
-import roundStore from '../stores/round.store';
+// import { teamAStore, teamBStore } from '../stores/team.store';
+// import roundStore from '../stores/round.store';
+import gameStore from '../stores/game.store';
 class FireStoreHelper {
     constructor(){
         this.db=firestore();
@@ -66,33 +67,101 @@ class FireStoreHelper {
         
     };
 
-    findTeam= async (filter)=>{
-        console.log('findTeamFilter :',filter)
-        const teams=await this.db.collection('teams')
-            .where('game_id','==',filter.game_id)
-            .where('team_index','==',filter.team_index)
-            .get();
-
-        if (teams.size===0) return null;
-
-        const team_id=teams.docs[0].data().team_id;
-
-        await this.db.collection('teams')
-            .doc(''+team_id)
-            .onSnapshot((querySnapshot)=>{
-                let team=querySnapshot.data();
-                console.log('findTeamInfo :',team)
-                if (filter.team_index===0){
-                    teamAStore.updateTeam(team)
-                }
-                else {
-                    teamBStore.updateTeam(team)
-                }
-                console.log('get realtimeChat:',team)
+    gameDataSync= async (filter)=>{
+        const gameRef=this.db.collection('games').doc(''+filter.game_id)
+        gameRef.onSnapshot(
+            (game)=>{
+                gameStore.updateGame({
+                    game_id:game.data().game_id,
+                    round_number:game.data().round_number,
+                    team_number:game.data().team_number,
+                    current_round_index:game.data().current_round_index,  
+                })
             },
             (error)=>{
-                console.log('getRealtimeChat error :',error)
-            });
+                console.log(error)
+            }
+        )
+
+        gameStore.updateGame({
+            chat_team:{
+                ...gameStore.chat_team,
+                chat_type:'team',
+                team_index:filter.team_index,
+            }
+        })
+        
+        this.db.collection('games').doc(''+filter.game_id)
+            .collection('chats').doc(''+filter.team_index)
+            .collection('messages')
+            .onSnapshot(
+                (messages)=>{
+                console.log('chats :',messages.docs.map(message=>message.data()))
+                gameStore.updateGame({
+                    chat_team:{
+                        ...gameStore.chat_team,
+                        messages : messages.docs.map(message=>message.data())
+                    }
+                })
+                }
+                ,
+                ()=>{}
+            )  
+
+        console.log('team_number :',gameStore.team_number);
+        for (let team_index=0;team_index<2;team_index++){
+            this.db.collection('games').doc(''+filter.game_id)
+                    .collection('teams').doc(''+team_index)
+                    .onSnapshot(
+                        (team)=>{
+                            console.log('adding team ',team.data())
+                            gameStore.updateGame({
+                                teams :gameStore.teams.set(team_index,{
+                                    team_index:team.team_index,
+                                    team_name:team.team_name,
+                                    max_count_member:team.max_count_member
+                                })
+                            })
+
+                           console.log('teams added :', gameStore.teams.get(team_index))
+                        }
+                )
+
+            this.db.collection('games').doc(''+filter.game_id)
+                    .collection('teams').doc(''+team_index)
+                    .collection('members')
+                    .onSnapshot(
+                        (members)=>{
+                            gameStore.updateGame({
+                                teams :gameStore.teams.set(team_index,{
+                                    ...gameStore.teams.get(team_index),
+                                    members:members.docs.map(snap=>snap.data())
+                                })
+                            })
+                        }
+                )
+        }
+
+        this.db.collection('games').doc(''+filter.game_id)
+            .collection('rounds').doc(''+gameStore.current_round_index)
+            .onSnapshot(
+                (round)=>{
+                    gameStore.updateGame({
+                        current_round:{
+                            round_index:round.data().round_index,
+                            topic:round.data().topic,
+                            current_quiz_index:round.data().current_quiz_index,
+                            quiz_number:round.data().quiz_number
+                        }
+                    })
+                }
+            );
+
+        for (let quiz_index=0;quiz_index<gameStore.current_round.quiz_number;quiz_index){
+            
+        }
+
+
     }
 
     findRound= async (filter)=>{

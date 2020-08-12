@@ -7,9 +7,7 @@ import {
     FlatList
 } from 'react-native'
 
-import Rounds from '../sample_data/rounds'
 
-const quiz=Rounds[0].quizzes[0];
 export default class AnswerScreen extends Component{
     render(){
         console.log('current_quiz:',quiz.answers.length);

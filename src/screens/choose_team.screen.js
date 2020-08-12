@@ -10,7 +10,7 @@ import {
 
 import Orientation from 'react-native-orientation-locker';
 import {observer} from 'mobx-react'
-import {teamAStore,teamBStore} from '../stores/team.store'
+// import {teamAStore,teamBStore} from '../stores/team.store'
 import userStore from '../stores/user.store';
 import fireStoreHelper from '../utils/firestore.helper';
 

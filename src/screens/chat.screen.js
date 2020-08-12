@@ -12,8 +12,8 @@ import {
 } from 'react-native'
 
 import gameStore from '../stores/game.store';
-import chatStore from '../stores/chat.store'
-import userStore from '../stores/user.store'
+// import chatStore from '../stores/chat.store'
+// import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 

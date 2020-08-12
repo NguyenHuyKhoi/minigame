@@ -7,7 +7,7 @@ import {
 import HintImageScreen from './hint_image.screen'
 import CurrentQuizScreen from './current_quiz.screen'
 import AllQuizScreen from './all_quiz.screen'
-import roundStore from '../stores/round.store'
+// import roundStore from '../stores/round.store'
 
 export default class GameScreen extends Component{
     render(){

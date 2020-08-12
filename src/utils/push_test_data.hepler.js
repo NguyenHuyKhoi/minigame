@@ -24,13 +24,13 @@ class PushTestData {
                     game_id:game.game_id,
                     round_number:game.round_number,
                     join_code:game.join_code,
-                    current_round_index:game.current_round_index
+                    current_round_index:game.current_round_index,
+                    team_number:game.team_number
                 });
 
                 await game.chats.forEach(async (chat)=>{
-                    const chatRef=gameRef.collection('chats').doc(''+chat.chat_index);
+                    const chatRef=gameRef.collection('chats').doc(''+chat.team_index);
                     await chatRef.set({
-                            chat_index:chat.chat_index,
                             chat_type:chat.chat_type,
                             team_index:chat.team_index,
                         });

@@ -12,9 +12,9 @@ import sampleRound from '../sample_data/games'
 import fireStoreHelper from '../utils/firestore.helper'
 import userStore from '../stores/user.store'
 import gameStore from '../stores/game.store'
-import chatStore from '../stores/chat.store'
+// import chatStore from '../stores/chat.store'
 import pushTestData from '../utils/push_test_data.hepler'
-import {teamAStore,teamBStore} from '../stores/team.store'
+// import {teamAStore,teamBStore} from '../stores/team.store'
 
 class GameItem extends Component{
     render(){

@@ -48,7 +48,7 @@ export default class HomeScreen extends Component{
         };       
 
             
-      //  pushTestData.pushAllData();
+        pushTestData.pushAllData();
     }
     componentDidMount=async ()=>{
         var games = await fireStoreHelper.getGamesList();
@@ -103,9 +103,7 @@ export default class HomeScreen extends Component{
                 <Text>Round List</Text>
                 <FlatList 
                     data={this.state.games}
-                    keyExtractor={(item) =>{
-                        console.log('extractor id',item.id)
-                        item.id}}
+                    keyExtractor={(item) => item.id}
                     extraData={this.state.rounds}
                     renderItem={({item})=>(
                         <GameItem 

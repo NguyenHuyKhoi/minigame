@@ -1,9 +1,7 @@
 import firestore from '@react-native-firebase/firestore'
 import users from '../sample_data/users'
 import games from '../sample_data/games'
-import chats from '../sample_data/chats'
-import teams from '../sample_data/teams'
-import rounds from '../sample_data/rounds'
+
 class PushTestData {
 
     constructor(){
@@ -20,81 +18,74 @@ class PushTestData {
 
     pushGamesData=async ()=>{
         await 
-            games.forEach((game,index)=>{
-               this.db.collection('games').doc(''+index)
-                    .set(game)
-                    .then(console.log('added game :',game));
-            })
-    };
-
-    pushChatsData=async ()=>{
-        await 
-            chats.forEach((chat,index)=>{
-            this.db.collection('chats').doc(''+index)
-                    .set(chat)
-                    .then(console.log('added chat :',chat));
-            })
-    }
-
-    pushTeamsData=async ()=>{
-        await 
-            teams.forEach((team,index)=>{
-                this.db.collection('teams').doc(''+index)
-                    .set(team)
-                    .then(console.log('added teams :',team))
-            })
-    }
-
-    
-    pushRoundsData=async ()=>{
-        await rounds.forEach((round)=>{
-            console.log('addingToFireStore :',round)
-            this.db.collection('rounds').doc(''+round.round_id)
-                .set({
-                    round_id:round.round_id,
-                    game_id:round.game_id,
-                    round_index:round.round_index,
-                    quiz_number:round.quiz_number,
-                    key_word:round.key_word,
-                    topic:round.topic,
-                    current_quiz_index:round.current_quiz_index
-
+            games.forEach(async (game)=>{
+                const gameRef= this.db.collection('games').doc(''+game.game_id)
+                await gameRef.set({
+                    game_id:game.game_id,
+                    round_number:game.round_number,
+                    join_code:game.join_code,
+                    current_round_index:game.current_round_index
                 });
-            round.quizzes.forEach((quiz)=>{
-                this.db.collection('rounds').doc(''+round.round_id)
-                    .collection('quizzes')
-                    .doc(''+quiz.quiz_id)
-                    .set({
-                        quiz_id:quiz.quiz_id,
-                        content:quiz.content,
-                        correct_answer:quiz.correct_answer,
-                        is_answered:quiz.is_answered,
-                    });
-                quiz.answers.forEach((answer)=>{
-                    this.db.collection('rounds').doc(''+round.round_id)
-                        .collection('quizzes')
-                        .doc(''+quiz.quiz_id)
-                        .collection('answers')
-                        .doc(''+answer.answer_id)
-                        .set({
-                            answer_id:answer.answer_id,
-                            content:answer.content,
-                            user_id:answer.user_id,
-                            user_name:answer.user_name,
-                            team_index:answer.team_index,
-                            is_correct:answer.is_correct
+
+                await game.chats.forEach(async (chat)=>{
+                    const chatRef=gameRef.collection('chats').doc(''+chat.chat_index);
+                    await chatRef.set({
+                            chat_index:chat.chat_index,
+                            chat_type:chat.chat_type,
+                            team_index:chat.team_index,
+                        });
+                
+                    await chat.messages.forEach((message)=>{
+                        chatRef.collection('messages').doc(''+message.time_stamp)
+                            .set(message)
                         })
                 })
-            }) 
-    })
+
+                await game.teams.forEach(async (team)=>{
+                    const teamRef=gameRef.collection('teams').doc(''+team.team_index)
+                    await teamRef.set({
+                            team_index:team.team_index,
+                            team_name:team.team_name,
+                            max_count_member:team.max_count_member
+                        });
+                    
+                    await team.members.forEach(async (member)=>{
+                        await teamRef.collection('members').doc(''+member.member_index)
+                            .set(member)
+                    })
+                })
+
+                await game.rounds.forEach(async (round)=>{
+                    const roundRef=gameRef.collection('rounds').doc(''+round.round_index)
+                    await roundRef.set({
+                        round_index:round.round_index,
+                        topic:round.topic,
+                        key_word:round.key_word,
+                        current_quiz_index:round.current_quiz_index,
+                        quiz_index:round.quiz_number
+                    });
+
+                    await round.quizzes.forEach(async (quiz)=>{
+                        const quizRef=roundRef.collection('quizzes').doc(''+quiz.quiz_index)
+                        await quizRef.set({
+                            quiz_index:quiz.quiz_index,
+                            content:quiz.content,
+                            correct_answer:quiz.correct_answer
+                        })
+                        
+                        await quiz.answers.forEach(async (answer)=>{
+                            await quizRef.collection('answers').doc(''+answer.answer_index)
+                                .set(answer)
+                        })
+                       
+                    });
+                })
+               
+            })
     }
     pushAllData=()=>{
         this.pushUsersData();
         this.pushGamesData();
-        this.pushChatsData();
-        console.log('preparing addTeams :',teams)
-        this.pushTeamsData();
-        this.pushRoundsData();
     }
 }
 

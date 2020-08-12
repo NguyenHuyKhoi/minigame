@@ -11,6 +11,7 @@ import CurrentQuizScreen from '../screens/current_quiz.screen'
 import GameScreen from '../screens/game.screen'
 import AnswerScreen from '../screens/answer.screen'
 import ChatScreen from '../screens/chat.screen'
+import TestScreen from '../screens/test.screen'
 
 export default MainNavigator =createStackNavigator(
     {
@@ -22,10 +23,11 @@ export default MainNavigator =createStackNavigator(
         current_quiz:CurrentQuizScreen,
         game:GameScreen,
         answer:AnswerScreen,
-        chat: ChatScreen
+        chat: ChatScreen,
+        test:TestScreen
     },
     {
-        initialRouteName:'login',
+        initialRouteName:'test',
         headerMode :'none',
         navigationOptions:{
             headerVisible:false

@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "113396870485",
+    "firebase_url": "https://minigame-b0e19.firebaseio.com",
+    "project_id": "minigame-b0e19",
+    "storage_bucket": "minigame-b0e19.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:113396870485:android:ac20004df31cf16bf8d3dc",
+        "android_client_info": {
+          "package_name": "com.minigame"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "113396870485-ml32dj1cu0n7l0ovjverlumbh11qj2dv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.minigame",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "113396870485-fdq1mhr13jm0l6l8mouf0c636k7vg1v5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBryl_UQ-xMJoOCSKp8XrpQT7BYzWI6gSc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "113396870485-fdq1mhr13jm0l6l8mouf0c636k7vg1v5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

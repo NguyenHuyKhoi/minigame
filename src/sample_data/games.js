@@ -1,0 +1,37 @@
+export default [
+    {
+        'game_id':0,
+        'creator_id':1,
+        'round_number':2,
+        'join_code':'23123',
+        'current_round_index':0
+    },
+   {
+        'game_id':1,
+        'creator_id':6,
+        'round_number':3,
+        'join_code':'123',
+        'current_round_index':0
+    },
+    {
+        'game_id':2,
+        'creator_id':2,
+        'round_number':6,
+        'join_code':'1223',
+        'current_round_index':0
+    },
+    {
+        'game_id':3,
+        'creator_id':3,
+        'round_number':4,
+        'join_code':'1323',
+        'current_round_index':0
+    },
+    {
+        'game_id':4,
+        'creator_id':1,
+        'round_number':5,
+        'join_code':'132423',
+        'current_round_index':0
+    },
+]

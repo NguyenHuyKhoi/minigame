@@ -1,4 +1,4 @@
-export default [
+[
     {
         'game_id':0,
         'round_number':2,

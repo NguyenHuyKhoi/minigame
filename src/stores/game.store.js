@@ -1,32 +1,45 @@
 
-import {observable,action} from 'mobx'
+import {observable,action, computed} from 'mobx'
+import userStore from './user.store';
 class GameStore{
-    @observable game_id=null;
-    @observable current_round_index=null;
-    @observable round_number=null;
-    @observable join_code=null;
-    @observable team_number=null;
-    @observable chat_team=null;
-    @observable chat_all=null;
-    @observable teams=new Map();
-    @observable current_round=null;
+    @observable game=null;
+    @observable game_list=null;
+    @observable chat_type='team'
 
+    @computed get user_team_index(){
+        const res=this.game.teams.filter(team => 
+            team.members.filter(member =>  member.user_id===userStore.user.user_id ).length>0
+        )
+
+        if (res.length===0) return -1;
+        console.log('userStore :',userStore.user.user_name)
+        console.log('user_team_index',res[0].team_index)
+        return res[0].team_index;
+    }
+
+    @computed get user_chat_index(){
+        return gameStore.chat_type==='all'?
+                 gameStore.game.team_number:gameStore.user_team_index
+    }
+    
     @action updateGame=(game)=>{
-        console.log('Game store :',game)
-        if (game.game_id!==null) this.game=game.game_id;
-        if (game.current_round_index!==null) this.current_round_index=game.current_round_index;
-        if (game.round_number!==null) this.round_number=game.round_number;
-        if (game.join_code!==null) this.join_code=game.join_code;
-        if (game.team_number!==null) this.team_number=game.team_number;
+        this.game=game;
+    }
 
-        console.log('Update game :',this.toString())
+    @action updateTeam=(team_index)=>{
+        this.team_index=team_index;
+    }
+
+    @action updateGameList=(game_list)=>{
+        this.game_list=game_list
+    }
+
+    @action updateChatType=(chat_type)=>{
+        this.chat_type=chat_type
     }
 
     toString=()=>{
-        return ('game_id : '+this.game+
-            '  ,current_round_index : '+this.current_round_index+
-            '  ,round_number : '+this.round_number+
-            '  ,join_code : '+this.join_code)
+        return ('GameStore toString()',this.game)
     }
 }
 

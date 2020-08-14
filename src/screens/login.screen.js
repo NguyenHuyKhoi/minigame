@@ -7,7 +7,6 @@ import {
     Alert
 } from 'react-native'
 
-import pushTestData from '../utils/push_test_data.hepler'
 import fireStoreHelper from '../utils/firestore.helper'
 import userStore from '../stores/user.store'
 import {hydrate} from '../stores/user.store'
@@ -39,20 +38,19 @@ export default class LoginScreen extends Component{
     componentDidMount=()=>{
         hydrate('userStore',userStore)
             .then(userStore=>{
-                  if (userStore.user_name!==null && userStore.password!==null){
+                  console.log('hydrate userStore ',userStore.user)
+                  if (userStore.user!==null){
                      this.props.navigation.navigate('home')
             }}
             )
     }
     login= async ()=>{
         if (this.validateUserInputs()){
-            var user=await fireStoreHelper.loginUser(this.state.user_name,this.state.password);
-            console.log('user in login :',user)
-            if (user===null) {
+            var result=await fireStoreHelper.loginUser(this.state.user_name,this.state.password);
+            if (!result) {
                 Alert.alert('Login failed');
             }
             else {
-                userStore.updateUser(user);
                 Alert.alert('Login successfully')
                 this.props.navigation.navigate('home')
             }
@@ -60,7 +58,6 @@ export default class LoginScreen extends Component{
 
     }
     render(){
-        console.log('tracking userStore login :',userStore.user_name);
         return (
             <View>
                 <TextInput placeholder='user_name'  onChangeText={user_name=>{this.setState({user_name})}} />

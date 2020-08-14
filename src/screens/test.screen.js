@@ -6,20 +6,19 @@ import {
     ImageBackground,
     FlatList
 } from 'react-native'
-import pushTestData from '../utils/push_test_data.hepler'
 import fireStoreHelper from '../utils/firestore.helper'
-
+import database from '@react-native-firebase/database'
 export default class TestScreen extends Component{
     constructor(props){
         super(props)
-        pushTestData.pushAllData();
-        fireStoreHelper.gameDataSync({
-            game_id:0,
-            team_index:0
-        })
     }
 
     render(){
+        database().ref('/games')
+            .on('value',snapshot=>{
+                console.log('data_changed :',snapshot.val())
+            });
+
         return (
             <View style={styles.container}>
             </View>

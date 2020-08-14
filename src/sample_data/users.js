@@ -2,32 +2,38 @@ export default [
     {
         'user_id':0,
         'user_name':'user0',
-        'password':'0'
+        'password':'0',
+        'credential':'user0-0'
     },
     {
         'user_id':1,
         'user_name':'user1',
-        'password':'1'
+        'password':'1',
+        'credential':'user1-1'
     },
     {
         'user_id':2,
         'user_name':'user2',
-        'password':'2'
+        'password':'2',
+        'credential':'user2-2'
     },
     {
         'user_id':3,
         'user_name':'user3',
-        'password':'3'
+        'password':'3',
+        'credential':'user3-3'
     },
     {
         'user_id':4,
         'user_name':'user4',
-        'password':'4'
+        'password':'4',
+        'credential':'user4-4'
     },
     {
         'user_id':5,
         'user_name':'user5',
-        'password':'5'
+        'password':'5',
+        'credential':'user5-5'
     },
     
 ]

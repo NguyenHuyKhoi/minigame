@@ -12,7 +12,6 @@ import GameScreen from '../screens/game.screen'
 import AnswerScreen from '../screens/answer.screen'
 import ChatScreen from '../screens/chat.screen'
 import TestScreen from '../screens/test.screen'
-
 export default MainNavigator =createStackNavigator(
     {
         login:LoginScreen,
@@ -27,7 +26,7 @@ export default MainNavigator =createStackNavigator(
         test:TestScreen
     },
     {
-        initialRouteName:'test',
+        initialRouteName:'login',
         headerMode :'none',
         navigationOptions:{
             headerVisible:false

@@ -12,8 +12,7 @@ import {
 } from 'react-native'
 
 import gameStore from '../stores/game.store';
-// import chatStore from '../stores/chat.store'
-// import userStore from '../stores/user.store'
+import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 
@@ -28,13 +27,7 @@ export default class ChatScreen extends Component{
     }
     switchChatType=(chat_type)=>{
         console.log('switchChatType :',chat_type)
-        if (chat_type!==chatStore.chat_type){
-            fireStoreHelper.findChat({
-                game_id:chatStore.game_id,
-                team_index:chat_type==='all'?2:0,
-                chat_type:chat_type
-            })
-        }
+        gameStore.updateChatType(chat_type)
     }
 
     updateMessage=(message)=>{
@@ -45,13 +38,16 @@ export default class ChatScreen extends Component{
     
 
     renderMessages=()=>{
-        console.log('chatStore on renderMessages :',chatStore.toString())
-        const messages= chatStore.messages;
+        const chat_index=gameStore.user_chat_index;
+        console.log('chat_index,',chat_index,gameStore.chat_type);
+        const chat=gameStore.game.chats[chat_index]
+        console.log('renderMessages :',gameStore.game.chats[chat_index])
+        const messages= Object.values(chat.messages);
         return (
-            messages!==null?messages.map(message=>
+            messages!==null?messages.map(message =>
     
-                    <View style={[styles.message_container,{backgroundColor:'transparent',alignItems:message.user_id===userStore.user_id?'flex-end':'flex-start'}]}>
-                        <Text>{message.user_id===userStore.user_id?'Me':message.user_name}</Text>
+                    <View style={[styles.message_container,{backgroundColor:'transparent',alignItems:message.user_id===userStore.user.user_id?'flex-end':'flex-start'}]}>
+                        <Text>{message.user_id===userStore.user.user_id?'Me':message.user_name}</Text>
                         <Text>{message.content}</Text>
                     </View>
             
@@ -68,13 +64,20 @@ export default class ChatScreen extends Component{
             Alert.alert('message is empty ');
         }
         else {
-    
-            fireStoreHelper.sendNewMessage(this.state.message);
+            fireStoreHelper.sendMessage({
+                game_id:gameStore.game.game_id,
+                chat_index:gameStore.user_chat_index,
+                message:this.state.message,
+                user:userStore.user
+            });
+
+            this.setState({
+                message:''
+            })
         }
         
     }
     render(){
-        console.log('current_messages',chatStore.messages)
         return (
             <View style={styles.container}>
                 <View style={styles.header}>
@@ -99,6 +102,7 @@ export default class ChatScreen extends Component{
                     <View style={styles.footer}>
                         <TextInput 
                          style={styles.message_edit}
+                         value={this.state.message}
                          onChangeText={(text)=>this.updateMessage(text)} />
 
                          <TouchableOpacity style={styles.button} 

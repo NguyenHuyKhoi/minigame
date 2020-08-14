@@ -12,6 +12,7 @@ import GameScreen from '../screens/game.screen'
 import AnswerScreen from '../screens/answer.screen'
 import ChatScreen from '../screens/chat.screen'
 import TestScreen from '../screens/test.screen'
+import AllQuizScreen from '../screens/all_quiz.screen'
 export default MainNavigator =createStackNavigator(
     {
         login:LoginScreen,
@@ -19,6 +20,7 @@ export default MainNavigator =createStackNavigator(
         home:HomeScreen,
         choose_team:ChooseTeamScreen,
         hint_image:HintImageScreen,
+        all_quiz:AllQuizScreen,
         current_quiz:CurrentQuizScreen,
         game:GameScreen,
         answer:AnswerScreen,

@@ -59,7 +59,7 @@ export default class ChooseTeamScreen extends Component{
     };
 
     goToGame=()=>{
-        this.props.navigation.navigate('chat')
+        this.props.navigation.navigate('all_quiz')
     }
 
     chooseTeam=(team)=>{

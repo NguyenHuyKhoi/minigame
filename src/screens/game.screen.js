@@ -7,11 +7,9 @@ import {
 import HintImageScreen from './hint_image.screen'
 import CurrentQuizScreen from './current_quiz.screen'
 import AllQuizScreen from './all_quiz.screen'
-// import roundStore from '../stores/round.store'
 
 export default class GameScreen extends Component{
     render(){
-        console.log('roundStore on gameScene :',roundStore)
         return(
         <View style={styles.container}>
             <View style={styles.col1}>
@@ -32,15 +30,19 @@ const styles=StyleSheet.create({
     },
     col1:{
         flex:1,
+        width:'50%',
         flexDirection:'column'
     },
     image:{
-        flex:1
+        flex:1,
+        height:'50%'
     },
     currentQuiz:{
-        flex:1
+        flex:1,
+        height:'50%'
     },
     col2:{
-        flex:1
+        flex:1,
+        width:'50%',
     }
 })

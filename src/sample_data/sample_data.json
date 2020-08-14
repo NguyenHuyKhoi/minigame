@@ -141,8 +141,7 @@
                                 "user_id":"0",
                                 "user_name":"user0",
                                 "team_index":0,
-                                "content":"Team",
-                                "is_correct":false
+                                "content":"Team"
         
                             },
                             {
@@ -150,8 +149,7 @@
                                 "user_id":"1",
                                 "user_name":"user1",
                                 "team_index":0,
-                                "content":"Group",
-                                "is_correct":false
+                                "content":"Group"
         
                             },
                             {
@@ -159,12 +157,14 @@
                                 "user_id":"5",
                                 "user_name":"user5",
                                 "team_index":1,
-                                "content":"Organization",
-                                "is_correct":true
+                                "content":"Organion"
         
                             }
                         ],
-                        "is_answered":false
+                        "is_picked":true,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
                     },
                     {
                         "quiz_index":1,
@@ -176,12 +176,15 @@
                                 "user_id":"0",
                                 "user_name":"user0",
                                 "team_index":0,
-                                "content":"United Nation",
-                                "is_correct":true
+                                "content":"United Nation"
+                
         
                             }
                         ],
-                        "is_answered":true
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
                     },
                     {
                         "quiz_index":2,
@@ -193,8 +196,8 @@
                                 "user_id":"0",
                                 "user_name":"user0",
                                 "team_index":0,
-                                "content":"Young",
-                                "is_correct":false
+                                "content":"Young"
+                    
         
                             },
                             {
@@ -202,12 +205,15 @@
                                 "user_id":"3",
                                 "user_name":"user3",
                                 "team_index":1,
-                                "content":"Child",
-                                "is_correct":true
+                                "content":"Chid"
+                       
         
                             }
                         ],
-                        "is_answered":false
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
                     },
                     {
                         "quiz_index":3,
@@ -219,8 +225,8 @@
                                 "user_id":"0",
                                 "user_name":"user0",
                                 "team_index":0,
-                                "content":"1950",
-                                "is_correct":false
+                                "content":"1950"
+                
         
                             },
                             {
@@ -228,12 +234,15 @@
                                 "user_id":"4",
                                 "user_name":"user4",
                                 "team_index":1,
-                                "content":"1946",
-                                "is_correct":true
+                                "content":"1936"
+                        
         
                             }
                         ],
-                        "is_answered":false
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
                     }
                 ]
                     

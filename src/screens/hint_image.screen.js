@@ -14,6 +14,7 @@ const data ={
     size_height:3,
     hidden:[0,1,4,5,6]
 }
+
 export default class HintImageScreen extends Component{
     render(){
         let arr=[];
@@ -24,7 +25,7 @@ export default class HintImageScreen extends Component{
                 <ImageBackground style={styles.image}
                     source={{uri:data.url}}>
                     {arr.map(({item})=>(
-                            <View style={{width:400/data.size_width,height:250/data.size_height,
+                            <View style={{width:600/data.size_width,height:450/data.size_height,
                             backgroundColor:item==='hidden'?'gray':'transparent'}}/>
                         )
                     )}
@@ -37,7 +38,7 @@ export default class HintImageScreen extends Component{
 const styles=StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'yellow',
+        margin:30,
         justifyContent:'center',
         alignItems:'center'
     },

@@ -95,6 +95,32 @@ class FireStoreHelper {
             })
             .then(()=>console.log('send message successfully '))
     }
+
+    sendAnswer=async (data)=>{
+        console.log('SendAnswerData :',data)
+        this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index+'/quizzes/'+data.quiz_index+'/answers/'+gameStore.current_quiz.answers.length)
+            .set({
+                answer_index:gameStore.current_quiz.answers.length,
+                content:data.content,
+                team_index:data.team_index,
+                user_id:data.user.user_id,
+                user_name:data.user.user_name
+            })
+            .then(()=>console.log('Send answer successfully '))
+    }
+
+    confirmSolver=async (data)=>{
+        console.log('confirmSolverData :',data)
+        this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index+'/quizzes/'+data.quiz_index)
+            .update({
+                is_solved:true,
+                solved_by_user_id:data.user.user_id,
+                solved_by_team_index:data.team_index,
+            })
+            .then(()=>console.log('confirm solver successfully '))
+    }
+
+
 }
 
 const fireStoreHelper=new FireStoreHelper();

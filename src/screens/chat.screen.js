@@ -77,6 +77,15 @@ export default class ChatScreen extends Component{
         }
         
     }
+
+    goToGame=()=>{
+        this.props.navigation.navigate('all_quiz')
+    }
+
+    goToAnswer=()=>{
+        this.props.navigation.navigate('answer')
+    }
+
     render(){
         return (
             <View style={styles.container}>
@@ -87,6 +96,16 @@ export default class ChatScreen extends Component{
 
                     <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('all')}>
                         <Text>All </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('team')}
+                        onPress={()=>{this.goToGame()}}>
+                        <Text>Game </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('all')}
+                         onPress={()=>{this.goToAnswer()}}>
+                        <Text>Answer </Text>
                     </TouchableOpacity>
                 </View>
 

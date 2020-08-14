@@ -6,14 +6,16 @@ import {
     ImageBackground,
     FlatList
 } from 'react-native'
+import gameStore from '../stores/game.store'
+import { observer } from 'mobx-react'
 
+@observer
 export default class CurrentQuizScreen extends Component{
     render(){
         return (
             <View style={styles.container}>
                 <Text>
-                    {/* {this.props.quiz} */}
-                    Question 1:...f3 oieghgregh4hg98 h9hhg9 gh984gh43h8h g8h3h4hg8
+                    {gameStore.current_quiz.content}
                 </Text>
             </View>
         )
@@ -23,8 +25,7 @@ export default class CurrentQuizScreen extends Component{
 const styles=StyleSheet.create({
     container:{
         flex:1,
-        backgroundColor:'green',
         justifyContent:'center',
-        alignContent:'center'
+        alignItems:'center'
     }
 })

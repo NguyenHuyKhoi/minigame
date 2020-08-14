@@ -21,6 +21,20 @@ class GameStore{
         return gameStore.chat_type==='all'?
                  gameStore.game.team_number:gameStore.user_team_index
     }
+
+    @computed get current_round(){
+        return this.game.rounds[this.game.current_round_index]
+    }
+
+    @computed get current_quiz(){
+        return this.current_round.quizzes[this.current_round.current_quiz_index]
+    }
+
+    @computed get is_answered_by_user(){
+        return (this.current_quiz.answers.filter(
+            answer=>answer.user_id===userStore.user.user_id
+        ).length > 0)
+    }
     
     @action updateGame=(game)=>{
         this.game=game;

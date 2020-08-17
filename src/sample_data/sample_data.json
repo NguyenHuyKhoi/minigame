@@ -127,7 +127,6 @@
             {
                 "round_index":0,
                 "topic":"International",
-                "key_word":"UNICEF",
                 "current_quiz_index":0,
                 "quiz_number":4,
                 "quizzes":[
@@ -135,32 +134,6 @@
                         "quiz_index":0,
                         "content":"Quiz 0 : what is social unit of people that is structured and managed to meet a need or to pursue collective goals",
                         "correct_answer":"Organization",
-                        "answers":[
-                            {
-                                "answer_index":0,
-                                "user_id":"0",
-                                "user_name":"user0",
-                                "team_index":0,
-                                "content":"Team"
-        
-                            },
-                            {
-                                "answer_index":1,
-                                "user_id":"1",
-                                "user_name":"user1",
-                                "team_index":0,
-                                "content":"Group"
-        
-                            },
-                            {
-                                "answer_index":2,
-                                "user_id":"5",
-                                "user_name":"user5",
-                                "team_index":1,
-                                "content":"Organion"
-        
-                            }
-                        ],
                         "is_picked":true,
                         "is_solved":false,
                         "solved_by_user_id":"",
@@ -170,17 +143,6 @@
                         "quiz_index":1,
                         "content":"Quiz 1: The biggest associations of nations in the worlds ",
                         "correct_answer":"United Nation",
-                        "answers":[
-                            {
-                                "answer_index":0,
-                                "user_id":"0",
-                                "user_name":"user0",
-                                "team_index":0,
-                                "content":"United Nation"
-                
-        
-                            }
-                        ],
                         "is_picked":false,
                         "is_solved":false,
                         "solved_by_user_id":"",
@@ -190,26 +152,6 @@
                         "quiz_index":2,
                         "content":"quiz 2 : A 6 year-old boy called ...",
                         "correct_answer":"Child",
-                        "answers":[
-                            {
-                                "answer_index":0,
-                                "user_id":"0",
-                                "user_name":"user0",
-                                "team_index":0,
-                                "content":"Young"
-                    
-        
-                            },
-                            {
-                                "answer_index":0,
-                                "user_id":"3",
-                                "user_name":"user3",
-                                "team_index":1,
-                                "content":"Chid"
-                       
-        
-                            }
-                        ],
                         "is_picked":false,
                         "is_solved":false,
                         "solved_by_user_id":"",
@@ -219,33 +161,113 @@
                         "quiz_index":3,
                         "content":"quiz 3 : A one year after WW2 ending.",
                         "correct_answer":"1946",
-                        "answers":[
-                            {
-                                "answer_index":0,
-                                "user_id":"0",
-                                "user_name":"user0",
-                                "team_index":0,
-                                "content":"1950"
-                
-        
-                            },
-                            {
-                                "answer_index":0,
-                                "user_id":"4",
-                                "user_name":"user4",
-                                "team_index":1,
-                                "content":"1936"
-                        
-        
-                            }
-                        ],
                         "is_picked":false,
                         "is_solved":false,
                         "solved_by_user_id":"",
                         "solved_by_team_index":""
                     }
-                ]
+                ],
+                "keyword":{
+                    "correct_answer":"UNICEF",
+                    "is_solved":false,
+                    "solved_by_user_id":"",
+                    "solved_by_team_index":""
+
+                },
+                "hint_image":{
+                    "piece_number":4,
+                    "piece_columns":2,
+                    "piece_rows":2,
+                    "url":"https://firebasestorage.googleapis.com/v0/b/minigame-b0e19.appspot.com/o/hint_images%2FUNICEF.jpg?alt=media&token=84fab754-c176-4ed8-a248-3f55987b376d",
+                    "piece_status":[0,0,0,0]
+                }
+               
                     
+            },
+            {
+                "round_index":1,
+                "topic":"Nature",
+                "current_quiz_index":0,
+                "quiz_number":7,
+                "quizzes":[
+                    {
+                        "quiz_index":0,
+                        "content":"Quiz 0 : what is the flow of gases on a large scale",
+                        "correct_answer":"wind",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    },
+                    {
+                        "quiz_index":1,
+                        "content":"Quiz 1: [cloud is answer] ",
+                        "correct_answer":"cloud",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    },
+                    {
+                        "quiz_index":2,
+                        "content":"quiz 2 : [fast is answer]",
+                        "correct_answer":"fast",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    },
+                    {
+                        "quiz_index":3,
+                        "content":"quiz 3 : [spiral is answer].",
+                        "correct_answer":"spiral",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    },
+                    {
+                        "quiz_index":4,
+                        "content":"quiz 4 : [straw is answer].",
+                        "correct_answer":"straw",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    },
+                    {
+                        "quiz_index":5,
+                        "content":"quiz 5 : [disaster is answer].",
+                        "correct_answer":"disaster",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    },
+                    {
+                        "quiz_index":6,
+                        "content":"quiz 6 : [USA is answer].",
+                        "correct_answer":"USA",
+                        "is_picked":false,
+                        "is_solved":false,
+                        "solved_by_user_id":"",
+                        "solved_by_team_index":""
+                    }
+                ],
+                "keyword":{
+                    "correct_answer":"tornado",
+                    "is_solved":false,
+                    "solved_by_user_id":"",
+                    "solved_by_team_index":""
+
+                },
+                "hint_image":{
+                    "piece_number":6,
+                    "piece_columns":3,
+                    "piece_rows":2,
+                    "url":"https://firebasestorage.googleapis.com/v0/b/minigame-b0e19.appspot.com/o/hint_images%2Ftornado.jpg?alt=media&token=e2a64281-d726-487b-8dff-c5b7f28313d8",
+                    "piece_status":[0,0,0,0,0,0]
+                }   
             }
         ]
     }

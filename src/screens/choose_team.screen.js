@@ -12,6 +12,7 @@ import Orientation from 'react-native-orientation-locker';
 import {observer} from 'mobx-react'
 import userStore from '../stores/user.store';
 import gameStore from '../stores/game.store'
+import length from '../utils/custom_func'
 
 import fireStoreHelper from '../utils/firestore.helper';
 
@@ -59,18 +60,18 @@ export default class ChooseTeamScreen extends Component{
     };
 
     goToGame=()=>{
-        this.props.navigation.navigate('all_quiz')
+        this.props.navigation.navigate('game')
     }
 
-    chooseTeam=(team)=>{
+    chooseTeam=async (team)=>{
         console.log('chooseTeam :')
         if (gameStore.user_team_index!==-1){
             Alert.alert('You are in a team')
         }
         else 
-        if (gameStore.game.teams[team.team_index].members.length
+        if (length(gameStore.game.teams[team.team_index].members)
             < gameStore.game.teams[team.team_index].max_members){
-                fireStoreHelper.chooseTeam({
+                await fireStoreHelper.chooseTeam({
                     game_id:gameStore.game.game_id,
                     team_index:team.team_index,
                     user:userStore.user
@@ -80,7 +81,7 @@ export default class ChooseTeamScreen extends Component{
                 Alert.alert('Users count reach limit...')
             }
 
-        console.log('members length :',gameStore.game.teams[team.team_index].members.length)
+        console.log('members length :',length(gameStore.game.teams[team.team_index].members))
         console.log('max_member :',gameStore.game.teams[team.team_index].max_members)
     }
 

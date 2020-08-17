@@ -49,8 +49,8 @@ export default class HomeScreen extends Component{
         this.props.navigation.navigate('login');
     }
 
-    joinGame=(game)=>{
-        fireStoreHelper.findGame({
+    joinGame=async (game)=>{
+        await fireStoreHelper.findGame({
             game_id:game.game_id,
         });
         

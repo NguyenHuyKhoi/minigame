@@ -2,19 +2,27 @@ import React,{Component}from 'react'
 import {
     View,
     Text,
-    StyleSheet
+    StyleSheet,
+    Alert
 } from 'react-native'
 import HintImageScreen from './hint_image.screen'
 import CurrentQuizScreen from './current_quiz.screen'
 import AllQuizScreen from './all_quiz.screen'
 
 export default class GameScreen extends Component{
+    goToAnswer=()=>{
+        Alert.alert('Press Answer')
+        this.props.navigation.navigate('answer')
+    }
     render(){
         return(
         <View style={styles.container}>
             <View style={styles.col1}>
                     <HintImageScreen style={styles.image}/>
-                    <CurrentQuizScreen style={styles.currentQuiz}/>
+                     <CurrentQuizScreen onPressAnswer={()=>this.goToAnswer()} 
+                        style={styles.currentQuiz}/> 
+
+                  
             </View>
             <AllQuizScreen style={styles.col2}/>
 

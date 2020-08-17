@@ -22,7 +22,8 @@ export default class AnswerScreen extends Component{
     constructor(props){
         super(props);
         this.state={
-            answer :''
+            answer :'',
+            quiz :null
         }
     }
 
@@ -33,14 +34,28 @@ export default class AnswerScreen extends Component{
         })
     }
     
-
+    renderQuiz =()=>{
+        const params=this.props.navigation.state.params
+        let quiz=null 
+    //    if (params.quiz_index!==null)  quiz=gameStore.current_round.quizzes[params.quiz_index] else 
+        quiz=gameStore.current_quiz;  
+        return (
+            <Text>{quiz.content}</Text>
+        )
+    }
     renderAnswers=()=>{
-        const round=gameStore.game.rounds[gameStore.game.current_round_index]
-        console.log('renderAnswers - currentRound :',round);
-        const quiz=round.quizzes[round.current_quiz_index];
+        const params=this.props.navigation.state.params
+        console.log('paramsOnAnswer ',params)
+        const round =gameStore.current_round ;
+        
+        let quiz =null 
+      //  if (params.quiz_index!==null) quiz=gameStore.current_round.quizzes[params.quiz_index] else 
+        quiz=gameStore.current_quiz; 
+
         console.log('renderAnswers - currentQuiz :',quiz);
 
-        const answers= Object.values(quiz.answers);
+        let answers=null
+        if (quiz.answers!==null && quiz.answers!==undefined) answers= Object.values(quiz.answers);
         return (
             answers!==null?answers.map(answer =>
     
@@ -56,28 +71,26 @@ export default class AnswerScreen extends Component{
 
 
     
-    sendAnswer= ()=>{
-        
-        
+    sendAnswer=async  ()=>{
         if (this.state.answer===''){
-            Alert.alert('answer is empty ');
+             Alert.alert('answer is empty ');
             return 
         }
 
-        if (gameStore.current_quiz.is_solved){
-            Alert.alert('This quiz has been solved ..., can answered more ')
-            return 
-        }
+        // if (gameStore.current_quiz.is_solved){
+        //     Alert.alert('This quiz has been solved ..., can answered more ')
+        //     return 
+        // }
 
-        if (gameStore.is_answered_by_user){
-            Alert.alert('You answers this quiz ...,can answered more ')
-            return ;
-        }
+        // if (gameStore.is_answered_by_user){
+        //     Alert.alert('You answers this quiz ...,can answered more ')
+        //     return ;
+        // }
        
 
-        Alert.alert('Sending answer :',this.state.answer);
+      
      
-        fireStoreHelper.sendAnswer({
+        await fireStoreHelper.sendAnswer({
             game_id:gameStore.game.game_id,
             round_index:gameStore.current_round.round_index,
             quiz_index:gameStore.current_quiz.quiz_index,
@@ -86,15 +99,39 @@ export default class AnswerScreen extends Component{
             user:userStore.user
         });
 
+         Alert.alert('Submit answer successfully :'+this.state.answer);
+
         if (gameStore.current_quiz.correct_answer===this.state.answer){
-            Alert.alert("Correct answer ...")
-            fireStoreHelper.confirmSolver({
+             Alert.alert("Correct answer ...")
+            await fireStoreHelper.confirmSolver({
                 game_id:gameStore.game.game_id,
                 round_index:gameStore.current_round.round_index,
                 quiz_index:gameStore.current_quiz.quiz_index,
                 user:userStore.user,
                 team_index:gameStore.user_team_index,
             })
+
+            await fireStoreHelper.openHintPiece({
+                game_id:gameStore.game.game_id,
+                round_index:gameStore.current_round.round_index,
+            })
+
+            const next_quiz = gameStore.current_round.current_quiz_index<gameStore.current_round.quiz_number-1?
+                gameStore.current_round.current_quiz_index+1:-1
+
+            if (next_quiz===-1){
+                 Alert.alert("Solve all quizzes, please guess keyword now ")
+                return ;
+            }
+
+            await fireStoreHelper.nextQuiz({
+                game_id:gameStore.game.game_id,
+                round_index:gameStore.current_round.round_index,
+                quiz_index:next_quiz,
+            })
+        }
+        else {
+             Alert.alert("Wrong answer")
         }
 
         this.setState({
@@ -109,16 +146,20 @@ export default class AnswerScreen extends Component{
     }
 
     goToGame=()=>{
-        this.props.navigation.navigate('all_quiz')
+        this.props.navigation.navigate('game')
     }
     render(){
+       // const params=this.props.navigation.state.params;
         return (
             ///only 2 teams 
             <View style={styles.container}>
               
                 <View style={{width:'100%',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                    <Text style={{flex:10}}>{gameStore.current_quiz.content}</Text>
-
+                   
+                    <View style={{flex:10}}>    
+                     {this.renderQuiz()}
+                    </View>
+                
                     <View style={{flex:2,justifyContent:'center',alignItems:'center',marginHorizontal:5}}>
                        <TouchableOpacity style={{width:100,height:40,borderRadius:10,backgroundColor:'green',
                                             justifyContent:'center',alignItems:'center'}}
@@ -158,17 +199,21 @@ export default class AnswerScreen extends Component{
                 </View>
            
 
-                    <View style={styles.footer}>
-                        <TextInput 
-                         style={styles.answer_edit}
-                         value={this.state.answer}
-                         onChangeText={(text)=>this.updateAnswer(text)} />
+                    {
+                        !gameStore.current_quiz.is_solved 
+                        && !gameStore.is_answered_by_user &&
+                            <View style={styles.footer}>
+                            <TextInput 
+                            style={styles.answer_edit}
+                            value={this.state.answer}
+                            onChangeText={(text)=>this.updateAnswer(text)} />
 
-                         <TouchableOpacity style={styles.button} 
-                            onPress={()=>this.sendAnswer()}>
-                                <Text>Send</Text>
-                         </TouchableOpacity>
-                    </View>
+                            <TouchableOpacity style={styles.button} 
+                                onPress={()=>this.sendAnswer()}>
+                                    <Text>Send</Text>
+                            </TouchableOpacity>
+                            </View>
+                    }
 
             </View>
         )

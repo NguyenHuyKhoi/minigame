@@ -58,20 +58,20 @@ export default class ChatScreen extends Component{
 
 
     
-    sendMessage=()=>{
+    sendMessage=async ()=>{
         Alert.alert('Send message :',this.state.message);
         if (this.state.message===''){
             Alert.alert('message is empty ');
         }
         else {
-            fireStoreHelper.sendMessage({
+           await fireStoreHelper.sendMessage({
                 game_id:gameStore.game.game_id,
                 chat_index:gameStore.user_chat_index,
                 message:this.state.message,
                 user:userStore.user
             });
 
-            this.setState({
+            await this.setState({
                 message:''
             })
         }
@@ -79,11 +79,11 @@ export default class ChatScreen extends Component{
     }
 
     goToGame=()=>{
-        this.props.navigation.navigate('all_quiz')
+        this.props.navigation.navigate('game')
     }
 
     goToAnswer=()=>{
-        this.props.navigation.navigate('answer')
+        this.props.navigation.navigate('answer',{})
     }
 
     render(){

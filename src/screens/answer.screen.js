@@ -44,13 +44,9 @@ export default class AnswerScreen extends Component{
         )
     }
     renderAnswers=()=>{
-        const params=this.props.navigation.state.params
-        console.log('paramsOnAnswer ',params)
         const round =gameStore.current_round ;
         
-        let quiz =null 
-      //  if (params.quiz_index!==null) quiz=gameStore.current_round.quizzes[params.quiz_index] else 
-        quiz=gameStore.current_quiz; 
+        let quiz=gameStore.current_quiz; 
 
         console.log('renderAnswers - currentQuiz :',quiz);
 
@@ -120,7 +116,8 @@ export default class AnswerScreen extends Component{
                 gameStore.current_round.current_quiz_index+1:-1
 
             if (next_quiz===-1){
-                 Alert.alert("Solve all quizzes, please guess keyword now ")
+                Alert.alert("Solve all quizzes, please guess keyword now ")
+                this.props.navigation.navigate('keyword_answer');
                 return ;
             }
 
@@ -145,6 +142,10 @@ export default class AnswerScreen extends Component{
         this.props.navigation.navigate('chat')
     }
 
+    goToKeywordAnswer=()=>{
+        this.props.navigation.navigate('keyword_answer')
+    }
+
     goToGame=()=>{
         this.props.navigation.navigate('game')
     }
@@ -161,16 +162,21 @@ export default class AnswerScreen extends Component{
                     </View>
                 
                     <View style={{flex:2,justifyContent:'center',alignItems:'center',marginHorizontal:5}}>
-                       <TouchableOpacity style={{width:100,height:40,borderRadius:10,backgroundColor:'green',
-                                            justifyContent:'center',alignItems:'center'}}
+                       <TouchableOpacity style={styles.button}
                                     onPress={()=>this.goToGame()}>
                             <Text>Game</Text>
                         </TouchableOpacity>
                    </View>
+
+                   <View style={{flex:2,justifyContent:'center',alignItems:'center',marginHorizontal:5}}>
+                       <TouchableOpacity style={styles.button}
+                                    onPress={()=>this.goToKeywordAnswer()}>
+                            <Text>Keyword answer</Text>
+                        </TouchableOpacity>
+                   </View>
                    
                     <View style={{flex:2,justifyContent:'center',alignItems:'center'}}>
-                       <TouchableOpacity style={{width:100,height:40,borderRadius:10,backgroundColor:'green',
-                                            justifyContent:'center',alignItems:'center'}}
+                       <TouchableOpacity style={styles.button}
                                     onPress={()=>this.goToChat()}>
                             <Text>Chat</Text>
                         </TouchableOpacity>
@@ -247,13 +253,13 @@ const styles=StyleSheet.create({
         backgroundColor:'gray'
     },
     button:{
-        width:100,
+        width:80,
         height:40,
         borderRadius:10,
         backgroundColor:'green',
         justifyContent:'center',
         alignItems:'center',
-        marginHorizontal:10,
+        marginHorizontal:15,
     },
     answer_container:{
         marginVertical:10,

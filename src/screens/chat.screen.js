@@ -15,6 +15,7 @@ import gameStore from '../stores/game.store';
 import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
+import {parseValues} from '../utils/custom_func'
 
 @observer
 export default class ChatScreen extends Component{
@@ -42,7 +43,7 @@ export default class ChatScreen extends Component{
         console.log('chat_index,',chat_index,gameStore.chat_type);
         const chat=gameStore.game.chats[chat_index]
         console.log('renderMessages :',gameStore.game.chats[chat_index])
-        const messages= Object.values(chat.messages);
+        const messages= parseValues(chat.messages);
         return (
             messages!==null?messages.map(message =>
     

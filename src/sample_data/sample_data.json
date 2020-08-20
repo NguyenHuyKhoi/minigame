@@ -3,9 +3,17 @@
         {
         "game_id":0,
         "round_number":2,
+        "enable_join_time":"2020-08-20T11:33:10+07:00",
+        "choose_team_duration":20,
         "team_number":2,
         "join_code":"23123",
+        "answer_time_per_quiz":25,
+        "keyword_answer_time":60,
         "current_round_index":0,
+        "answer_timer":{
+            "start_time":-1,
+            "update_by_user_id":-1
+        },
         "chats":[
             {
                 "chat_type":"team",
@@ -78,12 +86,6 @@
                 "max_members":4,
                 "members":[
                     {
-                        "member_index":0,
-                        "user_id":0,
-                        "user_name":"user0",
-                        "score":0
-                    },
-                    {
                         "member_index":1,
                         "user_id":1,
                         "user_name":"user1",
@@ -127,8 +129,9 @@
             {
                 "round_index":0,
                 "topic":"International",
-                "current_quiz_index":0,
                 "quiz_number":4,
+              
+                "current_quiz_index":0,
                 "quizzes":[
                     {
                         "quiz_index":0,
@@ -327,7 +330,9 @@
             "game_id":0,
             "round_number":2,
             "team_number":2,
-            "join_code":"23123"
+            "join_code":"23123",
+            "enable_join_time":"2020-08-20T11:33:10+07:00",
+            "choose_team_duration":20
         }
     ]
 }

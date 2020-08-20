@@ -1,10 +1,16 @@
-
-import {observable,action, computed} from 'mobx'
+import {observable,action, computed, when} from 'mobx'
+import {length} from '../utils/custom_func'
 import userStore from './user.store';
 class GameStore{
+   
+
+
     @observable game=null;
     @observable game_list=null;
     @observable chat_type='team'
+    @observable is_finished =false 
+    constructor(){
+    }
 
     @computed get user_team_index(){
         console.log('lengthTeams :',length(this.game.teams))
@@ -31,9 +37,20 @@ class GameStore{
         return this.game.rounds[this.game.current_round_index]
     }
 
+    @computed get pick_random_team(){
+        let arr=this.game.teams.filter(team=>
+            length(team.members)<team.max_members);
+        if (length(arr)===0) return -1;
+        return arr[0].team_index;
+    }
+
     @computed get current_quiz(){
         if (this.current_round===null) return null;
         return this.current_round.quizzes[this.current_round.current_quiz_index]
+    }
+
+    @computed get is_keyword_answer_time(){
+        return (gameStore.current_round.current_quiz_index===-1)
     }
 
     @computed get is_answered_by_user(){
@@ -57,6 +74,19 @@ class GameStore{
         if (gameStore.current_round===null) return false;
         return (!gameStore.current_round.keyword.is_solved
             && !gameStore.is_keyword_answered_by_user)
+    }
+
+    @computed get picked_quizzes_number(){
+        return gameStore.current_round.quizzes.filter(quiz=>quiz.is_picked).length
+    }
+
+    @action countDownAnswerTime(){
+        this.current_round.remaining_time_answer--;
+        console.log('remainingTime: ',this.current_round.remaining_time_answer)
+    }
+
+    @action finishGame=()=>{
+        this.is_finished=true;
     }
     
     @action updateGame=(game)=>{

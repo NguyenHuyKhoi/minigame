@@ -5,7 +5,8 @@ import {
 import database from '@react-native-firebase/database'
 import userStore from '../stores/user.store';
 import gameStore from '../stores/game.store';
-import length from './custom_func'
+import {length,parseValues} from './custom_func'
+import answerTimer from '../stores/answer_timer.store';
 
 class FireStoreHelper {
     constructor(){
@@ -23,8 +24,8 @@ class FireStoreHelper {
         
 
         if (users.val()===null) return false;
-        console.log('user data:',Object.values(users.val())[0])   
-        userStore.updateUser(Object.values(users.val())[0])
+        console.log('user data:',parseValues(users.val())[0])   
+        userStore.updateUser(parseValues(users.val())[0])
         return true
     }
 
@@ -70,15 +71,23 @@ class FireStoreHelper {
     findGame=async (filter)=>{
         await this.db.ref('games/'+filter.game_id)
             .on('value',snapshot=>{
-                console.log('findGame :',snapshot.val())
                 gameStore.updateGame(snapshot.val())
+            })
+
+        await this.db.ref('games/'+filter.game_id)
+            .on('child_changed',snapshot=>{
+                if (snapshot.key!=='answer_timer') return ;
+                console.log('child_changed_snapshot',snapshot.val())
+                answerTimer.stop();
+                answerTimer.start(snapshot.val().start_time)
             })
     }
 
     chooseTeam=async (data)=>{
         console.log('chooseTeamData :',data)
-        let member_count=length(gameStore.game.teams[data.team_index]);
+        let member_count=length(gameStore.game.teams[data.team_index].members);
 
+        console.log('memberCountChooseTeam:',member_count)
         await this.db.ref('games/'+data.game_id+'/teams/'+data.team_index+'/members/'+member_count)
             .set({
                 member_index:member_count,
@@ -153,28 +162,44 @@ class FireStoreHelper {
             .then(()=>console.log('confirm solver successfully '))
     }
 
-    nextQuiz=async(data)=>{
-        console.log('nextQuizData :',data)
+    chooseQuiz=async(data)=>{
+        console.log('chooseQuizData :',data)
+        await this.db.ref('games/'+data.game_id)
+            .update({
+                current_round_index:data.round_index,
+            })
+
         await this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index)
             .update({
                 current_quiz_index:data.quiz_index,
             })
 
+        if (data.quiz_index!==-1)
         await this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index+'/quizzes/'+data.quiz_index)
             .update({
                 is_picked:true,
             })
-          
+
     }
 
-    nextRound=async(data)=>{
-        console.log('nextRoundData :',data)
-        await this.db.ref('games/'+data.game_id)
+    updateAnswerTimer=async (data)=>{
+        console.log('updateAnswerTimer :',data)
+        await this.db.ref('games/'+data.game_id+'/answer_timer/')
             .update({
-                current_round_index:data.round_index,
+                start_time:data.start_time,
+                update_by_user_id:data.update_by_user_id
             })
-          
     }
+
+    resetUpdateByUserIdValue=async (data)=>{
+        console.log('resetUpdateBy...',data)
+        await this.db.ref('games/'+data.game_id+'/answer_timer/')
+            .update({
+                update_by_user_id:data.update_by_user_id
+            })
+    }
+
+  
 
     openHintPiece=async (data)=>{
         console.log('openHintPiece ',data)
@@ -213,7 +238,7 @@ class FireStoreHelper {
     openAllHintPiece=async (data)=>{
         console.log('openAllHintPiece ',data)
         let piece_status =gameStore.current_round.hint_image.piece_status;
-        piece_status.forEach(async (value,index) =>{
+        await piece_status.forEach(async (value,index) =>{
             await this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index+'/hint_image/piece_status')
             .update({
                 [index]:1
@@ -223,7 +248,61 @@ class FireStoreHelper {
 
     }
 
+    openAllCorrectAnswers=async (data)=>{
+        console.log('openAllCorrectAnswers ',data)
+        await gameStore.current_round.quizzes.forEach(async (quiz,index) =>{
+            await this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index+'/quizzes/'+index)
+            .update({
+                is_solved :true
+            })
+        })
 
+
+    }
+
+
+    notifyAnswerTimeOut=async (data)=>{
+        await this.db.ref('games/'+data.game_id+'/answer_timer/')
+            .update({
+                start_time:data.start_time,
+                current_quiz_index:data.current_quiz_index
+            })
+    }
+
+    findNextIndexes=(data)=>{
+        console.log('findNextIndexes :',data)
+        if (data.keyword_guessed){
+            //move next round
+            if (gameStore.game.current_round_index<gameStore.game.round_number-1){
+                return {
+                    quiz_index:0,
+                    round_index:gameStore.current_round.round_index+1
+                }
+            }
+            else return null
+        }
+        else {
+            //move next quiz 
+            if (gameStore.picked_quizzes_number<gameStore.current_round.quiz_number){
+                return {
+                    quiz_index:gameStore.current_round.current_quiz_index+1,
+                    round_index:gameStore.current_round.round_index
+                }
+            }
+            else if (!gameStore.is_keyword_answer_time) return {
+                quiz_index:-1,
+                round_index:gameStore.current_round.round_index
+            } 
+            else if (gameStore.game.current_round_index<gameStore.game.round_number-1){
+                    return {
+                        quiz_index:0,
+                        round_index:gameStore.current_round.round_index+1
+                    }
+                }
+            else return null
+        }
+        
+    }
 }
 
 const fireStoreHelper=new FireStoreHelper();

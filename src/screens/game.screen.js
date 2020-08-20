@@ -8,12 +8,15 @@ import {
 import HintImageScreen from './hint_image.screen'
 import CurrentQuizScreen from './current_quiz.screen'
 import AllQuizScreen from './all_quiz.screen'
-
+import fireStoreHelper from '../utils/firestore.helper'
+import gameStore from '../stores/game.store'
+import userStore from '../stores/user.store'
 export default class GameScreen extends Component{
     goToAnswer=()=>{
         Alert.alert('Press Answer')
         this.props.navigation.navigate('answer')
     }
+
     render(){
         return(
         <View style={styles.container}>

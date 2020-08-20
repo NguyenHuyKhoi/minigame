@@ -15,7 +15,7 @@ import gameStore from '../stores/game.store';
 import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
-
+import {parseValues} from '../utils/custom_func'
 @observer
 export default class AnswerScreen extends Component{
 
@@ -35,23 +35,23 @@ export default class AnswerScreen extends Component{
     }
     
     renderQuiz =()=>{
-        const params=this.props.navigation.state.params
-        let quiz=null 
     //    if (params.quiz_index!==null)  quiz=gameStore.current_round.quizzes[params.quiz_index] else 
-        quiz=gameStore.current_quiz;  
         return (
-            <Text>{quiz.content}</Text>
+            <Text>{!gameStore.is_keyword_answer_time?
+                    gameStore.current_quiz.content
+                    :'Guess keyword'
+            }</Text>
         )
     }
+    
     renderAnswers=()=>{
-        const round =gameStore.current_round ;
-        
-        let quiz=gameStore.current_quiz; 
-
-        console.log('renderAnswers - currentQuiz :',quiz);
-
         let answers=null
-        if (quiz.answers!==null && quiz.answers!==undefined) answers= Object.values(quiz.answers);
+        if (gameStore.is_keyword_answer_time){
+            answers=parseValues(gameStore.current_round.keyword.answers)
+        }
+        else {
+            answers=parseValues(gameStore.current_quiz.answers);
+        }
         return (
             answers!==null?answers.map(answer =>
     
@@ -107,25 +107,43 @@ export default class AnswerScreen extends Component{
                 team_index:gameStore.user_team_index,
             })
 
+              //after confirmSolver , no users can send answers and update answer time ,exclude solver 
             await fireStoreHelper.openHintPiece({
                 game_id:gameStore.game.game_id,
                 round_index:gameStore.current_round.round_index,
             })
 
-            const next_quiz = gameStore.current_round.current_quiz_index<gameStore.current_round.quiz_number-1?
-                gameStore.current_round.current_quiz_index+1:-1
+            const next_indexes = fireStoreHelper.findNextIndexes({
+                keyword_guessed:false
+            });
 
-            if (next_quiz===-1){
-                Alert.alert("Solve all quizzes, please guess keyword now ")
-                this.props.navigation.navigate('keyword_answer');
-                return ;
+            // if (next_quiz===-1){
+            //     Alert.alert("Solve all quizzes, please guess keyword now ")
+            //     this.props.navigation.navigate('keyword_answer');
+            //     return ;
+            // }
+
+            if(next_indexes===null){
+                gameStore.finishGame()
+                return 
             }
 
-            await fireStoreHelper.nextQuiz({
+            await fireStoreHelper.chooseQuiz({
                 game_id:gameStore.game.game_id,
-                round_index:gameStore.current_round.round_index,
-                quiz_index:next_quiz,
+                round_index:next_indexes.round_index,
+                quiz_index:next_indexes.quiz_index,
             })
+
+          
+            // no one can update answer timer exclude solver 
+            //so don't change update_by_user_id field to prevent others update it again 
+            await fireStoreHelper.updateAnswerTimer({
+                game_id:gameStore.game.game_id,
+                start_time:(new Date()).toString(),
+                update_by_user_id:-1
+            })
+
+            
         }
         else {
              Alert.alert("Wrong answer")
@@ -206,8 +224,12 @@ export default class AnswerScreen extends Component{
            
 
                     {
-                        !gameStore.current_quiz.is_solved 
-                        && !gameStore.is_answered_by_user &&
+                        !gameStore.is_keyword_answer_time
+                        && !gameStore.current_quiz.is_solved 
+                        && !gameStore.is_answered_by_user 
+                        
+                        &&
+                        
                             <View style={styles.footer}>
                             <TextInput 
                             style={styles.answer_edit}

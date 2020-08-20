@@ -13,6 +13,7 @@ import AnswerScreen from '../screens/answer.screen'
 import ChatScreen from '../screens/chat.screen'
 import TestScreen from '../screens/test.screen'
 import AllQuizScreen from '../screens/all_quiz.screen'
+import ResultScreen from '../screens/result.screen'
 import KeywordAnswerScreen from '../screens/keyword_answer.screen'
 export default MainNavigator =createStackNavigator(
     {
@@ -27,7 +28,8 @@ export default MainNavigator =createStackNavigator(
         answer:AnswerScreen,
         keyword_answer:KeywordAnswerScreen,
         chat: ChatScreen,
-        test:TestScreen
+        test:TestScreen,
+        result:ResultScreen
     },
     {
         initialRouteName:'login',

@@ -15,6 +15,7 @@ import gameStore from '../stores/game.store';
 import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
+import { parseValues } from '../utils/custom_func';
 
 @observer
 export default class KeywordAnswerScreen extends Component{
@@ -31,13 +32,10 @@ export default class KeywordAnswerScreen extends Component{
     }
 
     renderAnswers=()=>{
-
         let round=gameStore.current_round
         if (round==null) return null;
 
-        let answers=null
-        if (round.keyword.answers!==undefined
-        &&    round.keyword.answers!==null) answers= Object.values(round.keyword.answers);
+        let answers=parseValues(round.keyword.answers);
         return (
             answers!==null?answers.map(answer =>
                     <View style={[styles.answer_container,{backgroundColor:'transparent',alignItems:answer.team_index%2===0?'flex-start':'flex-end'}]}>

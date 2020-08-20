@@ -9,10 +9,24 @@ import {
     
 } from 'react-native'
 import gameStore from '../stores/game.store'
+import userStore from '../stores/user.store'
+import answerTimer from '../stores/answer_timer.store'
 import { observer } from 'mobx-react'
+import fireStoreHelper from '../utils/firestore.helper'
 
 @observer
 export default class CurrentQuizScreen extends Component{
+    constructor(props){
+        super(props)
+        this.state={
+            remaining_answer_time:0
+        }
+    }
+
+  
+    
+
+    
     render(){
         return (
             <View style={styles.container}>
@@ -24,8 +38,23 @@ export default class CurrentQuizScreen extends Component{
                 </View>
 
                 <View style={{flex:1,justifyContent:'center',alignItems:'center'}}>
+                 
                     <Text>
-                        {gameStore.current_quiz.content}
+                        {
+                            !gameStore.is_keyword_answer_time?
+                            gameStore.current_quiz.content
+                            :'Guess keyword'
+                        }
+                    </Text>
+
+                    <Text>
+                        Remaining Time : {answerTimer.remaining_time} s
+                    </Text>
+                    <Text>
+                        Quiz: {gameStore.current_round.current_quiz_index} 
+                    </Text>
+                    <Text>
+                        Round: {gameStore.game.current_round_index} s
                     </Text>
                 </View>
                 

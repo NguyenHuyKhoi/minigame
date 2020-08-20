@@ -113,24 +113,25 @@ export default class AllQuizScreen extends Component{
                 round_index:gameStore.current_round.round_index,
             })
 
-            const next_round = gameStore.game.current_round_index<gameStore.game.round_number-1?
-                gameStore.game.current_round_index+1:-1;
-            if (next_round===-1) {
-                 Alert.alert("Mini game is finished ")
-                return 
+            await fireStoreHelper.openAllCorrectAnswers({
+                game_id:gameStore.game.game_id,
+                round_index:gameStore.current_round.round_index,
+            })
+
+            const next_indexes =fireStoreHelper.findNextIndexes({
+                keyword_guessed:true
+            })
+
+            if (next_indexes===null) {
+                gameStore.finishGame();
+                return ;
             }
 
-            await fireStoreHelper.nextRound({
+            await fireStoreHelper.chooseQuiz({
                 game_id:gameStore.game.game_id,
-                round_index:next_round
+                round_index:next_indexes.round_index,
+                quiz_index:next_indexes.quiz_index
             })
-
-            await fireStoreHelper.nextQuiz({
-                game_id:gameStore.game.game_id,
-                round_index:next_round,
-                quiz_index:0
-            })
-             Alert.alert("Move to round : "+next_round)
         }
         else {
              Alert.alert("wrong answer ...")

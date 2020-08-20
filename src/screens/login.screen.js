@@ -3,13 +3,19 @@ import {
     View,
     Text,
     TouchableOpacity,
-    TextInput,
-    Alert
+    Alert,
+    StyleSheet
 } from 'react-native'
 
 import fireStoreHelper from '../utils/firestore.helper'
 import userStore from '../stores/user.store'
 import {hydrate} from '../stores/user.store'
+import Button from '../components/button.component'
+import UserInput from '../components/user_input.component'
+import TextLink from '../components/text_link.component'
+import {USER_NAME_IC,PASSWORD_IC} from '../assets/index'
+import Orientation from 'react-native-orientation-locker'
+import { GRAY } from '../utils/palette'
 
 export default class LoginScreen extends Component{
     constructor(props){
@@ -18,6 +24,8 @@ export default class LoginScreen extends Component{
             user_name :'',
             password:''
         };
+
+        Orientation.lockToLandscape();
 
 
     };
@@ -57,18 +65,42 @@ export default class LoginScreen extends Component{
         }
 
     }
+
     render(){
         return (
-            <View>
-                <TextInput placeholder='user_name'  onChangeText={user_name=>{this.setState({user_name})}} />
-                <TextInput placeholder='password'  onChangeText={password=>{this.setState({password})}} />
-                <TouchableOpacity onPress={this.login} >
-                    <Text >Login</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={()=>{this.props.navigation.navigate('register')}} >
-                    <Text >Create Account</Text>
-                </TouchableOpacity>
+            <View style={styles.container}>
+                <View style={{flex:2}}/>
+                <View style={styles.login_container}>
+                    <UserInput 
+                        placeholder='user_name' 
+                        onChangeText={user_name=>{this.setState({user_name})}} 
+                        icon={USER_NAME_IC}
+                        />
+                    <UserInput 
+                        placeholder='password'  
+                        onChangeText={password=>{this.setState({password})}} 
+                        icon={PASSWORD_IC}
+                        />
+                    <Button onPress={()=>this.login()}  label='LOGIN'/>
+
+                    <TextLink onPressLink={()=>this.props.navigation.navigate('register')}  label='Not have a account, register ?'/>
+                </View>
+                <View style={{flex:2}}/>
             </View>
         )
     }
 }
+
+const styles=StyleSheet.create({
+    container:{
+        flex:1,
+        flexDirection:'row',
+        backgroundColor:GRAY
+    },
+    login_container:{
+        flex:3,
+        flexDirection:'column',
+        alignItems:'center',
+        justifyContent:'center',
+    }
+})

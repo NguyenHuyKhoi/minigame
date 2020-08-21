@@ -5,7 +5,8 @@ import {
     TouchableOpacity,
     TextInput,
     Alert,
-    FlatList
+    FlatList,
+    StyleSheet
 } from 'react-native'
 
 import Orientation from 'react-native-orientation-locker';
@@ -14,36 +15,25 @@ import userStore from '../stores/user.store';
 import gameStore from '../stores/game.store'
 import answerTimer from '../stores/answer_timer.store'
 import {length} from '../utils/custom_func'
-
+import {GRAY} from '../utils/palette'
+import Button from '../components/button.component'
+import HeaderText from '../components/header_text.component'
 import fireStoreHelper from '../utils/firestore.helper';
+import TeamTitle from '../components/team_title.component';
+import MemberCell from '../components/member_cell.component'
 
-
-class Detail extends Component{
-    render(){
-        return (
-            <Text>hello</Text>
-        )
-    }
-}
 class TeamDetail extends Component{
     render(){
         const team=this.props.team;
         console.log('team detail receiver :',team)
         return (
-            <View style={{flex:1,flexDirection:'column'}}>
-                <View style={{height:50,width:'100%',justifyContent:'center',alignItems:'center'}}>
-                    <Text onPress={this.props.chooseTeam}>{team.team_name}</Text>
-                </View>
+            <View style={{flex:1,flexDirection:'column',marginTop:10,marginHorizontal:10}}>
+                <TeamTitle chooseTeam={this.props.chooseTeam} team={this.props.team}/>
                 <FlatList 
                     data={team.members}
                     keyExtractor={(item)=>item.id}
                     renderItem={({item,index})=>(
-                        <View style={{height:40,flexDirection:'row',justifyContent:'space-around',
-                                backgroundColor:userStore.user!==null && 
-                                    item.user_id===userStore.user.user_id?'green':'white'}}>
-                            <Text>{index+1}</Text>
-                            <Text>{item.user_name}</Text>
-                        </View>
+                        <MemberCell index={index} member={item}/>
                     )}
 
                     keyExtractor={(user)=>user.id}
@@ -182,36 +172,23 @@ export default class ChooseTeamScreen extends Component{
 
     render(){
 
-        if (gameStore.game) console.log('gameStore currentGame :',gameStore.game)
         return (
-            <View style={{flex:1,flexDirection:'column'}}>
+            <View style={styles.container}>
+                <View style={{position:'absolute',right:0,top:0}}>
+                    <Button custom_width={100}
+                        onPress={()=>this.goToGame()}
+                        label="Game"/>
+                </View>
 
-                <View style={{width:'100%',justifyContent:'center',alignContent:'center'}} >
+                <HeaderText label='Teams'/>
+                <View style={{width:'100%',justifyContent:'center',alignItems:'center'}} >
                     { this.state.enable_start_game ?
                         <Text>Game started </Text>
                         :<Text>Game start in :{this.state.remaining_second} s</Text>
                     }
                 </View>
-                <View style={{width:'100%',flexDirection:'row',justifyContent:'flex-end'}}>
-
-                <TouchableOpacity style={{width:80,height:40,justifyContent:'center',borderRadius:10,backgroundColor:'green'}}
-                        onPress={()=>answerTimer.stop()}>
-                        <Text>
-                           Stop timer
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={{width:80,height:40,justifyContent:'center',borderRadius:10,backgroundColor:'green'}}
-                        onPress={()=>this.goToGame()}>
-                        <Text>
-                            Go to Game
-                        </Text>
-                    </TouchableOpacity>
-                    
-                </View>
                 {
                     gameStore.game!==null &&
-                
                     <View style={{flex:1,flexDirection:'row'}}>    
                         <TeamDetail style={{flex:1}} team={gameStore.game.teams[0]} chooseTeam={()=>this.chooseTeam(gameStore.game.teams[0].team_index)}/>
                         <TeamDetail style={{flex:1}} team={gameStore.game.teams[1]} chooseTeam={()=>this.chooseTeam(gameStore.game.teams[1].team_index)}/>
@@ -223,3 +200,17 @@ export default class ChooseTeamScreen extends Component{
         )
     }
 }
+
+
+
+const styles=StyleSheet.create({
+    container:{
+        flex:1,
+        flexDirection:'column',
+        backgroundColor:GRAY,
+        marginTop:10
+    },
+    round_list:{
+        margin:20,
+    }
+})

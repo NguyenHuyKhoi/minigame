@@ -65,7 +65,7 @@ export default class HomeScreen extends Component{
         return (
             <View style={styles.container}>
 
-                <View style={{width:'100%',flexDirection:'row',justifyContent:'flex-end',alignContent:'center'}}>
+                <View style={{position:'absolute',right:0,top:0}}>
                     <Button custom_width={100}
                         onPress={()=>this.signOut()}
                         label="Sign Out"/>
@@ -89,7 +89,8 @@ const styles=StyleSheet.create({
     container:{
         flex:1,
         flexDirection:'column',
-        backgroundColor:GRAY
+        backgroundColor:GRAY,
+        marginTop:10
     },
     round_list:{
         margin:20,

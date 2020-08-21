@@ -10,7 +10,7 @@ import {
 } from 'react-native'
 import gameStore from '../stores/game.store'
 import userStore from '../stores/user.store'
-import answerTimer from '../stores/answer_timer.store'
+import answerTimerStore from '../stores/answer_timer.store'
 import { observer } from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper'
 
@@ -48,7 +48,7 @@ export default class CurrentQuizScreen extends Component{
                     </Text>
 
                     <Text>
-                        Remaining Time : {answerTimer.remaining_time} s
+                        Remaining Time : {answerTimerStore.remaining_time} s
                     </Text>
                     <Text>
                         Quiz: {gameStore.current_round.current_quiz_index} 

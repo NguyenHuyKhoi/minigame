@@ -16,6 +16,14 @@ import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 import {parseValues} from '../utils/custom_func'
+import UserInput from '../components/user_input.component'
+import Button from '../components/button.component'
+import TextLink from '../components/text_link.component'
+import HeaderText from '../components/header_text.component'
+import {GRAY} from '../utils/palette'
+
+import { CHAT_IC } from '../assets';
+import Message from '../components/message.component';
 
 @observer
 export default class ChatScreen extends Component{
@@ -26,9 +34,10 @@ export default class ChatScreen extends Component{
             message :''
         }
     }
-    switchChatType=(chat_type)=>{
-        console.log('switchChatType :',chat_type)
-        gameStore.updateChatType(chat_type)
+    switchChatType=()=>{
+        console.log('switchChatType :',gameStore.chat_type)
+        if (gameStore.chat_type==='all') gameStore.updateChatType('team')
+            else gameStore.updateChatType('all')
     }
 
     updateMessage=(message)=>{
@@ -39,19 +48,16 @@ export default class ChatScreen extends Component{
     
 
     renderMessages=()=>{
-        const chat_index=gameStore.user_chat_index;
-        console.log('chat_index,',chat_index,gameStore.chat_type);
-        const chat=gameStore.game.chats[chat_index]
-        console.log('renderMessages :',gameStore.game.chats[chat_index])
-        const messages= parseValues(chat.messages);
+        const messages= parseValues(gameStore.current_chat.messages);
         return (
             messages!==null?messages.map(message =>
-    
-                    <View style={[styles.message_container,{backgroundColor:'transparent',alignItems:message.user_id===userStore.user.user_id?'flex-end':'flex-start'}]}>
-                        <Text>{message.user_id===userStore.user.user_id?'Me':message.user_name}</Text>
-                        <Text>{message.content}</Text>
-                    </View>
-            
+                    <Message
+                        on_left={message.user_id!==userStore.user.user_id}
+                        chat_type={gameStore.chat_type}
+                        message={message}
+                        is_me={message.user_id===userStore.user.user_id}
+                        is_opposite_team={message.team_index!==undefined && message.team_index!==gameStore.user_team_index}
+                        />      
             )
             :null
         )
@@ -69,7 +75,9 @@ export default class ChatScreen extends Component{
                 game_id:gameStore.game.game_id,
                 chat_index:gameStore.user_chat_index,
                 message:this.state.message,
-                user:userStore.user
+                user:userStore.user,
+                message_time:(new Date()).toString(),
+                team_index:gameStore.user_team_index
             });
 
             await this.setState({
@@ -89,62 +97,69 @@ export default class ChatScreen extends Component{
 
     render(){
         return (
+
             <View style={styles.container}>
-                <View style={styles.header}>
-                    <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('team')}>
-                        <Text>Team </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('all')}>
-                        <Text>All </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('team')}
-                        onPress={()=>{this.goToGame()}}>
-                        <Text>Game </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity style={styles.button} onPress={()=>this.switchChatType('all')}
-                         onPress={()=>{this.goToAnswer()}}>
-                        <Text>Answer </Text>
-                    </TouchableOpacity>
-                </View>
-
-                <View style={styles.body}>
-                    <ScrollView style={{flex:1,padding:10}}>
-                        {
-                            this.renderMessages()
-                        }
-                    </ScrollView>
-                </View>
-           
-
-                    <View style={styles.footer}>
-                        <TextInput 
-                         style={styles.message_edit}
-                         value={this.state.message}
-                         onChangeText={(text)=>this.updateMessage(text)} />
-
-                         <TouchableOpacity style={styles.button} 
-                            onPress={()=>this.sendMessage()}>
-                                <Text>Send</Text>
-                         </TouchableOpacity>
+                <ScrollView style={styles.scroll_view}>
+                    <View style={{position:'absolute',left:10,top:0}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.goToGame()}
+                            label="Game"/>
                     </View>
 
-            </View>
-        )
+                    <View style={{position:'absolute',right:10,top:0}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.goToAnswer()}
+                            label="Answer"/>
+                    </View>
+
+                    <HeaderText label={gameStore.chat_type==='team'?'Chat Team':'Chat all'}/>
+
+                    <View style={{width:'100%',flexDirection:'row',justifyContent:'space-around',marginTop:10}}>
+                        <TextLink 
+                            font_size={20}
+                            label={gameStore.chat_type==='team'?'Switch to Chat All':'Switch to Chat team'}
+                            onPressLink={()=>this.switchChatType()}/>
+                    </View>
+
+                    <View style={styles.body}>
+                            {
+                                this.renderMessages()
+                            }
+                    </View>
+                </ScrollView>
+
+                 <View style={styles.footer}>
+                        <View style={{flex:1,marginRight:10}}>
+                            <UserInput 
+                                initial_text={this.state.message}
+                                icon={CHAT_IC}
+                                placeholder="Enter your message..."
+                                onChangeText={(text)=>this.updateMessage(text)} />
+                        </View>
+
+                        <Button 
+                            custom_width={80}
+                            label='Send'
+                            onPress={()=>this.sendMessage()}/>
+                </View>
+
+
+
+        </View>
+        ) 
     }
 }
 
 const styles=StyleSheet.create({
     container:{
         flex:1,
-        flexDirection:'column'
+        flexDirection:'column',
+        marginTop:10,
+        backgroundColor:GRAY
     },
-    header:{
-        width:'50%',
-        flexDirection:'row',
-        alignItems:'center'
+    scroll_view:{
+        flex:1,
+        flexDirection:'column'
     },
     body:{
         flex:1,
@@ -154,25 +169,7 @@ const styles=StyleSheet.create({
     footer:{
         width:'100%',
         flexDirection:'row',
-        justifyContent:'center',
-        alignItems:'center',
+        padding:10
       //  backgroundColor:'red'
-    },
-    message_edit:{
-        flex:8,
-        backgroundColor:'gray'
-    },
-    button:{
-        width:100,
-        height:40,
-        borderRadius:10,
-        backgroundColor:'green',
-        justifyContent:'center',
-        alignItems:'center',
-        marginHorizontal:10,
-    },
-    message_container:{
-        marginVertical:10,
-        flexDirection:'column'
     }
 })

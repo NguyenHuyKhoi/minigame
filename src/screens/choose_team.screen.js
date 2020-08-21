@@ -13,7 +13,7 @@ import Orientation from 'react-native-orientation-locker';
 import {observer} from 'mobx-react'
 import userStore from '../stores/user.store';
 import gameStore from '../stores/game.store'
-import answerTimer from '../stores/answer_timer.store'
+import answerTimerStore from '../stores/answer_timer.store'
 import {length} from '../utils/custom_func'
 import {GRAY} from '../utils/palette'
 import Button from '../components/button.component'
@@ -48,7 +48,6 @@ export default class ChooseTeamScreen extends Component{
     constructor(props){
         super(props);
         this.state={
-            
             enable_start_game:false
         }
         Orientation.lockToLandscape();
@@ -149,6 +148,10 @@ export default class ChooseTeamScreen extends Component{
     }
 
     chooseTeam=async (team_index)=>{
+        if (this.state.enable_start_game){
+            Alert.alert("Game started ,can't choose team")
+            return ;
+        }
         console.log('chooseTeam :',team_index)
         if (gameStore.user_team_index!==-1){
             Alert.alert('You are in a team')

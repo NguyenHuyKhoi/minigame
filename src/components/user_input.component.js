@@ -20,7 +20,9 @@ export default class UserInput extends Component{
                     placeholderTextColor={BLACK}
                     onChangeText={text=>this.props.onChangeText(text)}/> */}
 
-                <TextInput style={styles.input}
+                <TextInput 
+                    value={this.props.initial_text!==undefined?this.props.initial_text:null}
+                    style={styles.input}
                     placeholder={this.props.placeholder}
                     onChangeText={text=>this.props.onChangeText(text)}
                 />

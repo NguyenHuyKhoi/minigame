@@ -49,6 +49,10 @@ class GameStore{
         return this.current_round.quizzes[this.current_round.current_quiz_index]
     }
 
+    @computed get current_chat(){
+        return this.game.chats[this.user_chat_index]
+    }
+
     @computed get is_keyword_answer_time(){
         return (gameStore.current_round.current_quiz_index===-1)
     }
@@ -72,8 +76,28 @@ class GameStore{
 
     @computed get is_available_to_answer_keyword(){
         if (gameStore.current_round===null) return false;
-        return (!gameStore.current_round.keyword.is_solved
+        return (
+            gameStore.user_team_index!==-1
+            && !gameStore.current_round.keyword.is_solved
             && !gameStore.is_keyword_answered_by_user)
+    }
+
+    @computed get is_available_to_answer_quiz(){
+
+        console.log('is_available_to_answer_quiz user_team_index :',   gameStore.user_team_index)
+        console.log('is_available_to_answer_quiz  is_keyword_answer_time:',   gameStore.is_keyword_answer_time)
+        console.log('is_available_to_answer_quiz is_solved:',   gameStore.current_quiz.is_solved )
+        console.log('is_available_to_answer_quiz is_answered_by_user :',   gameStore.is_answered_by_user )
+        console.log('is_available_to_answer_quiz current_round :',   gameStore.current_round )
+        if (gameStore.current_round===null) return false;
+        return (
+            gameStore.user_team_index!==-1
+            && !gameStore.is_keyword_answer_time
+            && !gameStore.current_quiz.is_solved 
+            && !gameStore.is_answered_by_user 
+
+
+        )
     }
 
     @computed get picked_quizzes_number(){

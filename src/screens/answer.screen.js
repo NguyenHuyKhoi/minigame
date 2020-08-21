@@ -13,6 +13,7 @@ import {
 
 import gameStore from '../stores/game.store';
 import userStore from '../stores/user.store'
+import answerTimeStore from '../stores/answer_timer.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 import {parseValues} from '../utils/custom_func'
@@ -24,6 +25,7 @@ import Answer from '../components/answer.component'
 import { GRAY,BLACK } from '../utils/palette';
 import UserInput from '../components/user_input.component';
 import { ANSWER_IC } from '../assets';
+import answerTimerStore from '../stores/answer_timer.store';
 @observer
 export default class AnswerScreen extends Component{
 
@@ -87,6 +89,7 @@ export default class AnswerScreen extends Component{
             quiz_index:gameStore.current_quiz.quiz_index,
             content:this.state.answer,
             team_index:gameStore.user_team_index,
+            answer_time:answerTimerStore.remaining_time,
             user:userStore.user
         });
 
@@ -164,6 +167,9 @@ export default class AnswerScreen extends Component{
     }
     render(){
        // const params=this.props.navigation.state.params;
+
+
+
         return (
             ///only 2 teams 
    
@@ -214,10 +220,8 @@ export default class AnswerScreen extends Component{
                 </ScrollView>
 
                     {
-                        !gameStore.is_keyword_answer_time
-                        && !gameStore.current_quiz.is_solved 
-                        && !gameStore.is_answered_by_user 
-                        
+                       
+                        gameStore.is_available_to_answer_quiz
                         &&
                         <View style={styles.footer}>
                             <View style={{flex:1,marginRight:10}}>

@@ -14,6 +14,7 @@ import gameStore from '../stores/game.store'
 import userStore from '../stores/user.store'
 import {observer} from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper'
+import answerTimerStore from '../stores/answer_timer.store'
 
 @observer
 export default class AllQuizScreen extends Component{
@@ -94,6 +95,7 @@ export default class AllQuizScreen extends Component{
             round_index:gameStore.current_round.round_index,
             content:keyword_answer,
             team_index:gameStore.user_team_index,
+            answer_time:answerTimerStore.remaining_time,
             user:userStore.user
         });
 

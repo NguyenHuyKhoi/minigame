@@ -3,7 +3,7 @@ import {observable,action} from 'mobx'
 import fireStoreHelper from '../utils/firestore.helper'
 import gameStore from './game.store'
 import userStore from './user.store'
-class AnswerTimer{
+class AnswerTimerStore{
     @observable remaining_time=null
     @observable is_running=false
 
@@ -98,9 +98,9 @@ class AnswerTimer{
     }
 }
 
-const answerTimer =new AnswerTimer();
+const answerTimerStore =new AnswerTimerStore();
 
-export default answerTimer 
+export default answerTimerStore 
 
 
 

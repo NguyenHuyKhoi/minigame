@@ -9,30 +9,36 @@ import {GREEN, WHITE, BLACK,GRAY, RED} from '../utils/palette'
 import userStore from '../stores/user.store'
 
 export default class Answer extends Component{
-    render(){
-        console.log('on_left',this.props.on_left)
+    ///time is second number (such as :90 (s))
+    renderTime=(time)=>{
+        if (time ===undefined || time===null ) return '';
+        let minute=Math.floor(time/60);
+        let second=Math.floor(time%60);
+        if (minute<10) minute='0'+minute;
+        if (second<10) second='0'+second;
         return (
-            <View style={styles.container}>
-                <View style={[styles.row,
-                      { justifyContent:this.props.on_left?'flex-start':'flex-end'}]}>
-                    <Text style={styles.time}>
-                        {this.props.answer.answer_time}
-                    </Text>
-                </View>
+            ''+minute+' : '+second+' s '
+        )
+    }
+    render(){
+        const {on_left,answer,is_true}=this.props;
+        return (
+            <View style={[styles.container,{
+                alignItems:on_left?'flex-start':'flex-end'
+            }]}>
+                <Text style={styles.time}>
+                    {this.renderTime(answer.answer_time)}
+                </Text>
 
-                <View style={[styles.row,
-                      { justifyContent:this.props.on_left?'flex-start':'flex-end'}
-                    ]}>
 
-                    <Text style={[styles.content,{
-                        backgroundColor:this.props.is_true?GREEN:RED,
-                        textAlign:this.props.on_left?'left':'right'
+                <Text style={[styles.content,{
+                        backgroundColor:is_true?GREEN:RED,
+                        textAlign:on_left?'left':'right'
                     }]}>
-                        {this.props.on_left?
-                            this.props.answer.user_name+' : '+this.props.answer.content
-                            :this.props.answer.content+' : '+this.props.answer.user_name}
-                    </Text>
-                </View>
+                        {on_left?
+                            answer.user_name+' : '+answer.content
+                            :answer.content+' : '+answer.user_name}
+                </Text>
             </View>
         )
     }

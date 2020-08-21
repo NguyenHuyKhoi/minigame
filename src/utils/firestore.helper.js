@@ -6,7 +6,7 @@ import database from '@react-native-firebase/database'
 import userStore from '../stores/user.store';
 import gameStore from '../stores/game.store';
 import {length,parseValues} from './custom_func'
-import answerTimer from '../stores/answer_timer.store';
+import answerTimerStore from '../stores/answer_timer.store';
 
 class FireStoreHelper {
     constructor(){
@@ -78,8 +78,8 @@ class FireStoreHelper {
             .on('child_changed',snapshot=>{
                 if (snapshot.key!=='answer_timer') return ;
                 console.log('child_changed_snapshot',snapshot.val())
-                answerTimer.stop();
-                answerTimer.start(snapshot.val().start_time)
+                answerTimerStore.stop();
+                answerTimerStore.start(snapshot.val().start_time)
             })
     }
 
@@ -100,12 +100,14 @@ class FireStoreHelper {
 
     sendMessage=async (data)=>{
         console.log('sendMessageData :',data)
-        await this.db.ref('games/'+data.game_id+'/chats/'+data.chat_index+'/messages/')
-            .push({
+        const message_count=length(gameStore.current_chat.messages)
+        await this.db.ref('games/'+data.game_id+'/chats/'+data.chat_index+'/messages/'+message_count)
+            .set({
                 content:data.message,
-                time_stamp:23235,
+                message_time:data.message_time,
                 user_id:data.user.user_id,
-                user_name:data.user.user_name
+                user_name:data.user.user_name,
+                team_index:data.team_index
             })
             .then(()=>console.log('send message successfully '))
     }

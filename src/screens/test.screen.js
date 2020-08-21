@@ -10,7 +10,7 @@ import {
 import fireStoreHelper from '../utils/firestore.helper'
 import database from '@react-native-firebase/database'
 import storage from '@react-native-firebase/storage'
-import answerTimer from '../stores/answer_timer.store'
+import answerTimerStore from '../stores/answer_timer.store'
 import {observer} from 'mobx-react'
 import gameStore from '../stores/game.store'
 
@@ -30,22 +30,22 @@ export default class TestScreen extends Component{
 
                 <View style={{flexDirection:'row',margin:50}}>
                     <TouchableOpacity style={styles.button}
-                        onPress={()=>answerTimer.start()}>
+                        onPress={()=>answerTimerStore.start()}>
                             <Text>Start</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button}
-                        onPress={()=>answerTimer.stop()}>
+                        onPress={()=>answerTimerStore.stop()}>
                             <Text>Stop</Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity style={styles.button}
-                        onPress={()=>answerTimer.reset()}>
+                        onPress={()=>answerTimerStore.reset()}>
                             <Text>Reset</Text>
                     </TouchableOpacity>
                 </View>
               
-                <Text>Remaining Time : {answerTimer.time} s</Text>
+                <Text>Remaining Time : {answerTimerStore.time} s</Text>
             </View>
         )
     }

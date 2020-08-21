@@ -174,7 +174,7 @@ export default class ChooseTeamScreen extends Component{
 
         return (
             <View style={styles.container}>
-                <View style={{position:'absolute',right:0,top:0}}>
+                <View style={{position:'absolute',right:10,top:0}}>
                     <Button custom_width={100}
                         onPress={()=>this.goToGame()}
                         label="Game"/>

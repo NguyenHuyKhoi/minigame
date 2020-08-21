@@ -120,7 +120,8 @@ class FireStoreHelper {
                 content:data.content,
                 team_index:data.team_index,
                 user_id:data.user.user_id,
-                user_name:data.user.user_name
+                user_name:data.user.user_name,
+                answer_time:data.answer_time
             })
             .then(()=>console.log('Send answer successfully '))
     }

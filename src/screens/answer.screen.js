@@ -16,6 +16,14 @@ import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 import {parseValues} from '../utils/custom_func'
+import Button from '../components/button.component'
+import HeaderText from '../components/header_text.component'
+import TextLink from '../components/text_link.component'
+import Answer from '../components/answer.component'
+
+import { GRAY,BLACK } from '../utils/palette';
+import UserInput from '../components/user_input.component';
+import { ANSWER_IC } from '../assets';
 @observer
 export default class AnswerScreen extends Component{
 
@@ -34,16 +42,6 @@ export default class AnswerScreen extends Component{
         })
     }
     
-    renderQuiz =()=>{
-    //    if (params.quiz_index!==null)  quiz=gameStore.current_round.quizzes[params.quiz_index] else 
-        return (
-            <Text>{!gameStore.is_keyword_answer_time?
-                    gameStore.current_quiz.content
-                    :'Guess keyword'
-            }</Text>
-        )
-    }
-    
     renderAnswers=()=>{
         let answers=null
         if (gameStore.is_keyword_answer_time){
@@ -54,12 +52,9 @@ export default class AnswerScreen extends Component{
         }
         return (
             answers!==null?answers.map(answer =>
-    
-                    <View style={[styles.answer_container,{backgroundColor:'transparent',alignItems:answer.team_index%2===0?'flex-start':'flex-end'}]}>
-                        <Text>{answer.user_id===userStore.user.user_id?'Me':answer.user_name}</Text>
-                        <Text>{answer.content}</Text>
-                    </View>
-            
+                    <Answer on_left={answer.team_index===0} 
+                    is_true={gameStore.current_quiz && answer.content===gameStore.current_quiz.correct_answer} 
+                    answer={answer}/>
             )
             :null
         )
@@ -171,57 +166,52 @@ export default class AnswerScreen extends Component{
        // const params=this.props.navigation.state.params;
         return (
             ///only 2 teams 
+   
             <View style={styles.container}>
-              
-                <View style={{width:'100%',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                   
-                    <View style={{flex:10}}>    
-                     {this.renderQuiz()}
+                <ScrollView style={styles.scroll_view}>
+                    <View style={{position:'absolute',left:10,top:0}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.goToGame()}
+                            label="Game"/>
                     </View>
-                
-                    <View style={{flex:2,justifyContent:'center',alignItems:'center',marginHorizontal:5}}>
-                       <TouchableOpacity style={styles.button}
-                                    onPress={()=>this.goToGame()}>
-                            <Text>Game</Text>
-                        </TouchableOpacity>
-                   </View>
 
-                   <View style={{flex:2,justifyContent:'center',alignItems:'center',marginHorizontal:5}}>
-                       <TouchableOpacity style={styles.button}
-                                    onPress={()=>this.goToKeywordAnswer()}>
-                            <Text>Keyword answer</Text>
-                        </TouchableOpacity>
-                   </View>
-                   
-                    <View style={{flex:2,justifyContent:'center',alignItems:'center'}}>
-                       <TouchableOpacity style={styles.button}
-                                    onPress={()=>this.goToChat()}>
-                            <Text>Chat</Text>
-                        </TouchableOpacity>
-                   </View>
+                    <View style={{position:'absolute',right:10,top:0}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.goToChat()}
+                            label="Chat"/>
+                    </View>
 
+                    <HeaderText label={'Quiz ' + gameStore.current_quiz.quiz_index}/>
 
-        
-                </View>
-                <View style={{width:'100%',flexDirection:'row'}}>
-                   <View style={{flex:5,justifyContent:'center',alignItems:'center'}}>
-                       <Text>{gameStore.game.teams[0].team_name}</Text>
-                   </View>
-                   <View style={{flex:5,justifyContent:'center',alignItems:'center'}}>
-                       <Text>{gameStore.game.teams[1].team_name}</Text>
-                   </View>
+                    <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
+                        <Text style={{width:'70%',fontSize:18,color:BLACK,textAlign: 'center'}}>
+                            {!gameStore.is_keyword_answer_time?gameStore.current_quiz.content:''}
+                        </Text>
+                    </View>
 
-                  
-                </View>
+                    <View style={{width:'100%',flexDirection:'row',justifyContent:'space-around',marginTop:10}}>
+                        <TextLink 
+                            font_size={24}
+                            label={gameStore.game.teams[0].team_name}
+                            onPressLink={()=>this.props.navigation.navigate('choose_team')}/>
+            
+                        <TextLink 
+                            onPressLink={()=>this.goToKeywordAnswer()} label='View keyword answers'/>
 
-                <View style={styles.body}>
-                    <ScrollView style={{flex:1,padding:10}}>
-                        {
-                            this.renderAnswers()
-                        }
-                    </ScrollView>
-                </View>
-           
+                        <TextLink 
+                            font_size={24}
+                            label={gameStore.game.teams[1].team_name}
+                            onPressLink={()=>this.props.navigation.navigate('choose_team')}
+                        />
+
+                    </View>
+
+                    <View style={styles.body}>
+                            {
+                                this.renderAnswers()
+                            }
+                    </View>
+                </ScrollView>
 
                     {
                         !gameStore.is_keyword_answer_time
@@ -229,21 +219,23 @@ export default class AnswerScreen extends Component{
                         && !gameStore.is_answered_by_user 
                         
                         &&
-                        
-                            <View style={styles.footer}>
-                            <TextInput 
-                            style={styles.answer_edit}
-                            value={this.state.answer}
-                            onChangeText={(text)=>this.updateAnswer(text)} />
-
-                            <TouchableOpacity style={styles.button} 
-                                onPress={()=>this.sendAnswer()}>
-                                    <Text>Send</Text>
-                            </TouchableOpacity>
+                        <View style={styles.footer}>
+                            <View style={{flex:1,marginRight:10}}>
+                                <UserInput 
+                                    icon={ANSWER_IC}
+                                    placeholder="You only answer once..."
+                                    onChangeText={(text)=>this.updateAnswer(text)} />
                             </View>
+
+                            <Button 
+                                custom_width={80}
+                                label='Send'
+                                onPress={()=>this.sendAnswer()}/>
+                        </View>
                     }
 
             </View>
+      
         )
     }
 }
@@ -251,12 +243,13 @@ export default class AnswerScreen extends Component{
 const styles=StyleSheet.create({
     container:{
         flex:1,
-        flexDirection:'column'
+        flexDirection:'column',
+        marginTop:10,
+        backgroundColor:GRAY
     },
-    header:{
-        width:'50%',
-        flexDirection:'row',
-        alignItems:'center'
+    scroll_view:{
+        flex:1,
+        flexDirection:'column'
     },
     body:{
         flex:1,
@@ -266,25 +259,7 @@ const styles=StyleSheet.create({
     footer:{
         width:'100%',
         flexDirection:'row',
-        justifyContent:'center',
-        alignItems:'center',
+        padding:10
       //  backgroundColor:'red'
-    },
-    answer_edit:{
-        flex:8,
-        backgroundColor:'gray'
-    },
-    button:{
-        width:80,
-        height:40,
-        borderRadius:10,
-        backgroundColor:'green',
-        justifyContent:'center',
-        alignItems:'center',
-        marginHorizontal:15,
-    },
-    answer_container:{
-        marginVertical:10,
-        flexDirection:'column'
     }
 })

@@ -16,6 +16,12 @@ import userStore from '../stores/user.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 import { parseValues } from '../utils/custom_func';
+import Button from '../components/button.component'
+import HeaderText from '../components/header_text.component'
+import TextLink from '../components/text_link.component'
+import Answer from '../components/answer.component'
+
+import { GRAY, BLACK } from '../utils/palette';
 
 @observer
 export default class KeywordAnswerScreen extends Component{
@@ -38,13 +44,14 @@ export default class KeywordAnswerScreen extends Component{
         let answers=parseValues(round.keyword.answers);
         return (
             answers!==null?answers.map(answer =>
-                    <View style={[styles.answer_container,{backgroundColor:'transparent',alignItems:answer.team_index%2===0?'flex-start':'flex-end'}]}>
-                        <Text>{answer.user_id===userStore.user.user_id?'Me':answer.user_name}</Text>
-                        <Text>{answer.content}</Text>
-                    </View>
+                <Answer 
+                    on_left={answer.team_index===0} 
+                    is_true={gameStore.current_round && answer.content===gameStore.current_round.keyword.correct_answer} 
+                    answer={answer}
+                />
             
             )
-            :null
+            :<Text style={{fontSize:20,color:BLACK,marginHorizontal:20}}>No one have yet answer keyword ,be first !</Text>
         )
     }
 
@@ -64,56 +71,50 @@ export default class KeywordAnswerScreen extends Component{
         return (
             ///only 2 teams 
             <View style={styles.container}>
-              
-                <View style={{width:'100%',flexDirection:'row',justifyContent:'center',alignItems:'center'}}>
-                   
-                    <View style={{flex:10}}>    
-                     {this.renderQuiz()}
+                 <ScrollView style={styles.scroll_view}>
+                    <View style={{position:'absolute',left:10,top:0}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.goToGame()}
+                            label="Game"/>
                     </View>
-                
-                    <View style={{flex:2,justifyContent:'center',alignItems:'center',marginHorizontal:5}}>
-                       <TouchableOpacity style={styles.button}
-                                    onPress={()=>this.goToGame()}>
-                            <Text>Game</Text>
-                        </TouchableOpacity>
-                   </View>
-                   
-                    <View style={{flex:2,justifyContent:'center',alignItems:'center'}}>
-                       <TouchableOpacity style={styles.button}
-                                    onPress={()=>this.goToAnswer()}>
-                            <Text>Answer</Text>
-                        </TouchableOpacity>
-                   </View>
 
-                   <View style={{flex:2,justifyContent:'center',alignItems:'center'}}>
-                       <TouchableOpacity style={styles.button}
-                                    onPress={()=>this.goToChat()}>
-                            <Text>Chat</Text>
-                        </TouchableOpacity>
-                   </View>
+                    <View style={{position:'absolute',right:10,top:0}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.goToChat()}
+                            label="Chat"/>
+                    </View>
 
+                    <HeaderText label={'Guess Keyword To Win !!!'}/>
 
-        
-                </View>
-                <View style={{width:'100%',flexDirection:'row'}}>
-                   <View style={{flex:5,justifyContent:'center',alignItems:'center'}}>
-                       <Text>{gameStore.game.teams[0].team_name}</Text>
-                   </View>
-                   <View style={{flex:5,justifyContent:'center',alignItems:'center'}}>
-                       <Text>{gameStore.game.teams[1].team_name}</Text>
-                   </View>
+                    {/* <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
+                        <Text style={{width:'70%',fontSize:18,color:BLACK,textAlign: 'center'}}>
+                            {!gameStore.is_keyword_answer_time?gameStore.current_quiz.content:''}
+                        </Text>
+                    </View> */}
 
-                  
-                </View>
+                    <View style={{width:'100%',flexDirection:'row',justifyContent:'space-around',marginTop:20}}>
+                        <TextLink 
+                            font_size={24}
+                            label={gameStore.game.teams[0].team_name}
+                            onPressLink={()=>this.props.navigation.navigate('choose_team')}/>
+            
+                        <TextLink 
+                            onPressLink={()=>this.goToAnswer()} label='View current quiz'/>
 
-                <View style={styles.body}>
-                    <ScrollView style={{flex:1,padding:10}}>
-                        {
-                            this.renderAnswers()
-                        }
-                    </ScrollView>
-                </View>
-    
+                        <TextLink 
+                            font_size={24}
+                            label={gameStore.game.teams[1].team_name}
+                            onPressLink={()=>this.props.navigation.navigate('choose_team')}
+                        />
+
+                    </View>
+
+                    <View style={styles.body}>
+                            {
+                                this.renderAnswers()
+                            }
+                    </View>
+                </ScrollView>
             </View>
         )
     }
@@ -122,40 +123,16 @@ export default class KeywordAnswerScreen extends Component{
 const styles=StyleSheet.create({
     container:{
         flex:1,
+        flexDirection:'column',
+        marginTop:10,
+        backgroundColor:GRAY
+    },
+    scroll_view:{
+        flex:1,
         flexDirection:'column'
-    },
-    header:{
-        width:'50%',
-        flexDirection:'row',
-        alignItems:'center'
-    },
+    },    
     body:{
         flex:1,
-        flexDirection:'column',
-       
+        flexDirection:'column' 
     },
-    footer:{
-        width:'100%',
-        flexDirection:'row',
-        justifyContent:'center',
-        alignItems:'center',
-      //  backgroundColor:'red'
-    },
-    answer_edit:{
-        flex:8,
-        backgroundColor:'gray'
-    },
-    button:{
-        width:80,
-        height:40,
-        borderRadius:10,
-        backgroundColor:'green',
-        justifyContent:'center',
-        alignItems:'center',
-        marginHorizontal:15,
-    },
-    answer_container:{
-        marginVertical:10,
-        flexDirection:'column'
-    }
 })

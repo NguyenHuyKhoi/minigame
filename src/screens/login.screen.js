@@ -72,11 +72,13 @@ export default class LoginScreen extends Component{
                 <View style={{flex:2}}/>
                 <View style={styles.login_container}>
                     <UserInput 
+                        margin_bottom={20}
                         placeholder='user_name' 
                         onChangeText={user_name=>{this.setState({user_name})}} 
                         icon={USER_NAME_IC}
                         />
                     <UserInput 
+                        margin_bottom={20}
                         placeholder='password'  
                         onChangeText={password=>{this.setState({password})}} 
                         icon={PASSWORD_IC}

@@ -11,7 +11,9 @@ import {WHITE,GRAY, BLACK} from '../utils/palette'
 export default class UserInput extends Component{
     render(){
         return(
-            <TouchableOpacity style={styles.container} >
+            <TouchableOpacity style={[styles.container,{
+                marginBottom:this.props.margin_bottom!==undefined ?this.props.margin_bottom:0
+            }]} >
                 <Image style={styles.icon} source={this.props.icon} />
                 {/* <TextInput style={styles.input} 
                     placeholder={this.props.placeholder}
@@ -30,7 +32,6 @@ export default class UserInput extends Component{
 const styles=StyleSheet.create({
     container:{
         width:'100%',
-        marginBottom:20,
         borderRadius:10,
         backgroundColor:WHITE,
         justifyContent:'center',

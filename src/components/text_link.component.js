@@ -11,7 +11,8 @@ export default class TextLink extends Component{
         return(
             <TouchableOpacity 
                 onPress={this.props.onPressLink} >
-                <Text style={{color:BLUE}}>
+                <Text style={{color:BLUE,
+                fontSize:this.props.font_size!==undefined?this.props.font_size:16}}>
                     {this.props.label}
                 </Text>
             </TouchableOpacity>

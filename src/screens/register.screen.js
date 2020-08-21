@@ -60,11 +60,13 @@ export default class RegisterScreen extends Component{
                 <View style={{flex:2}}/>
                 <View style={styles.register_container}>
                     <UserInput 
+                      margin_bottom={20}
                         placeholder='Username' 
                         onChangeText={user_name=>{this.setState({user_name})}} 
                         icon={USER_NAME_IC}
                         />
-                    <UserInput 
+                    <UserInput
+                      margin_bottom={20} 
                         placeholder='Password'  
                         onChangeText={password=>{this.setState({password})}} 
                         icon={PASSWORD_IC}

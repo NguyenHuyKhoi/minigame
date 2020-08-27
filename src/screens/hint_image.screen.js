@@ -6,13 +6,22 @@ import {
     ImageBackground,
     FlatList,
     Alert,
-    TouchableOpacity
+    Image,
+    TouchableOpacity,
+    Dimensions
 } from 'react-native'
 
 import storage from '@react-native-firebase/storage'
 import {observer} from 'mobx-react'
 import gameStore from '../stores/game.store'
+import { GRAY } from '../utils/palette'
+import { HIDDEN_IMG } from '../assets'
 
+const image_size={
+    //need to fix to resize with multi screens
+    width:Dimensions.get('window').width*0.4,
+    height:Dimensions.get('window').height*0.4
+}
 @observer
 export default class HintImageScreen extends Component{
 
@@ -25,18 +34,21 @@ export default class HintImageScreen extends Component{
             <View style={styles.container}>
                 {
                     hint_image.url!==null?
-                        <ImageBackground style={styles.image}
+                        <ImageBackground style={[styles.image,{backgroundColor:'red'}]}
                             source={{uri:hint_image.url}}>
                             <FlatList
                                 data={hint_image.piece_status}   
                                 keyExtractor={(item,index)=>index}
                                 renderItem={({item,index}) => (
-                                    <TouchableOpacity
+                                    <Image
                                         onPress={()=>{}}
-                                        style={{width:300/hint_image.piece_columns,height:200/hint_image.piece_rows,
-                                        backgroundColor: (item===0?'gray':'transparent')}}>
-
-                                    </TouchableOpacity>
+                                        source={item===0?HIDDEN_IMG:null}
+                                        style={{width:image_size.width/hint_image.piece_rows,
+                                        resizeMode:'center',
+                                        height:image_size.height/hint_image.piece_columns,
+                                        borderWidth:2,
+                                        borderColor:GRAY}}>
+                                    </Image>
                      
                                 )
                                 }
@@ -56,13 +68,13 @@ export default class HintImageScreen extends Component{
 const styles=StyleSheet.create({
     container:{
         flex:1,
-     
+        backgroundColor:GRAY,
         justifyContent:'center',
         alignItems:'center'
     },
     image:{
-        width:300,
-        height:200,
-        resizeMode:'contain'
+        width:image_size.width,
+        height:image_size.height,
+        resizeMode:'center'
     }
 })

@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     ImageBackground,
-    FlatList,
     TouchableOpacity,
     TextInput,
     Alert,
@@ -13,7 +12,6 @@ import {
 
 import gameStore from '../stores/game.store';
 import userStore from '../stores/user.store'
-import answerTimeStore from '../stores/answer_timer.store'
 import {observer}from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper';
 import {parseValues} from '../utils/custom_func'
@@ -21,11 +19,13 @@ import Button from '../components/button.component'
 import HeaderText from '../components/header_text.component'
 import TextLink from '../components/text_link.component'
 import Answer from '../components/answer.component'
-
+import RemainTime from '../components/remain_time.component'
 import { GRAY,BLACK } from '../utils/palette';
 import UserInput from '../components/user_input.component';
 import { ANSWER_IC } from '../assets';
-import answerTimerStore from '../stores/answer_timer.store';
+import WordRowText from '../components/word_row_text.component';
+import ChooseNextQuizModal from '../components/choose_next_quiz_modal.component'
+import uIStore from '../stores/ui.store';
 @observer
 export default class AnswerScreen extends Component{
 
@@ -70,18 +70,6 @@ export default class AnswerScreen extends Component{
             return 
         }
 
-        // if (gameStore.current_quiz.is_solved){
-        //     Alert.alert('This quiz has been solved ..., can answered more ')
-        //     return 
-        // }
-
-        // if (gameStore.is_answered_by_user){
-        //     Alert.alert('You answers this quiz ...,can answered more ')
-        //     return ;
-        // }
-       
-
-      
      
         await fireStoreHelper.sendAnswer({
             game_id:gameStore.game.game_id,
@@ -89,7 +77,7 @@ export default class AnswerScreen extends Component{
             quiz_index:gameStore.current_quiz.quiz_index,
             content:this.state.answer,
             team_index:gameStore.user_team_index,
-            answer_time:answerTimerStore.remaining_time,
+            answer_time:gameStore.remaining_time,
             user:userStore.user
         });
 
@@ -105,43 +93,21 @@ export default class AnswerScreen extends Component{
                 team_index:gameStore.user_team_index,
             })
 
-              //after confirmSolver , no users can send answers and update answer time ,exclude solver 
+            //after confirmSolver , no users can send answers and update answer time ,exclude solver 
             await fireStoreHelper.openHintPiece({
                 game_id:gameStore.game.game_id,
                 round_index:gameStore.current_round.round_index,
             })
 
-            const next_indexes = fireStoreHelper.findNextIndexes({
-                keyword_guessed:false
-            });
-
-            // if (next_quiz===-1){
-            //     Alert.alert("Solve all quizzes, please guess keyword now ")
-            //     this.props.navigation.navigate('keyword_answer');
-            //     return ;
-            // }
-
-            if(next_indexes===null){
-                gameStore.finishGame()
-                return 
+            //check if out of quizzes :
+            if (gameStore.out_of_quizzes){
+                gameStore.switchToAnswerKeyword()
+                this.props.navigation.navigate('keyword_answer');
             }
-
-            await fireStoreHelper.chooseQuiz({
-                game_id:gameStore.game.game_id,
-                round_index:next_indexes.round_index,
-                quiz_index:next_indexes.quiz_index,
-            })
-
-          
-            // no one can update answer timer exclude solver 
-            //so don't change update_by_user_id field to prevent others update it again 
-            await fireStoreHelper.updateAnswerTimer({
-                game_id:gameStore.game.game_id,
-                start_time:(new Date()).toString(),
-                update_by_user_id:-1
-            })
-
-            
+            else {
+                await uIStore.openChooseQuizModal();
+                gameStore.switchToChooseQuiz();
+            }
         }
         else {
              Alert.alert("Wrong answer")
@@ -165,15 +131,29 @@ export default class AnswerScreen extends Component{
     goToGame=()=>{
         this.props.navigation.navigate('game')
     }
+
+    onPressQuiz=async (quiz)=>{
+        await uIStore.closeChooseQuizModal();
+
+        await gameStore.switchToAnswerQuiz({
+            next_round:false,
+            quiz:quiz,
+        }) 
+
+     
+    }
+
     render(){
        // const params=this.props.navigation.state.params;
-
-
-
         return (
             ///only 2 teams 
    
             <View style={styles.container}>
+                <ChooseNextQuizModal
+                        visible={uIStore.choose_quiz_modal_open}
+                        quizzes={gameStore.current_round.quizzes}
+                        onPressQuiz={(quiz)=>this.onPressQuiz(quiz)}/>
+
                 <ScrollView style={styles.scroll_view}>
                     <View style={{position:'absolute',left:10,top:0}}>
                         <Button custom_width={100}
@@ -187,12 +167,22 @@ export default class AnswerScreen extends Component{
                             label="Chat"/>
                     </View>
 
-                    <HeaderText label={'Quiz ' + gameStore.current_quiz.quiz_index}/>
+                    <HeaderText label={gameStore.is_keyword_answer_time?
+                        'Go to keyword screen'
+                        :'Quiz ' + gameStore.current_quiz.quiz_index}/>
 
                     <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
                         <Text style={{width:'70%',fontSize:18,color:BLACK,textAlign: 'center'}}>
                             {!gameStore.is_keyword_answer_time?gameStore.current_quiz.content:''}
                         </Text>
+                        {!gameStore.is_keyword_answer_time?
+                            <WordRowText 
+                                content={gameStore.current_quiz.correct_answer}
+                                is_show_content={gameStore.current_quiz.is_solved}
+                                is_disable={gameStore.current_quiz.is_picked && 
+                                        !gameStore.current_quiz.is_solved}/>
+                            :null
+                        }
                     </View>
 
                     <View style={{width:'100%',flexDirection:'row',justifyContent:'space-around',marginTop:10}}>
@@ -219,24 +209,23 @@ export default class AnswerScreen extends Component{
                     </View>
                 </ScrollView>
 
-                    {
-                       
-                        gameStore.is_available_to_answer_quiz
-                        &&
-                        <View style={styles.footer}>
-                            <View style={{flex:1,marginRight:10}}>
-                                <UserInput 
-                                    icon={ANSWER_IC}
-                                    placeholder="You only answer once..."
-                                    onChangeText={(text)=>this.updateAnswer(text)} />
-                            </View>
-
-                            <Button 
-                                custom_width={80}
-                                label='Send'
-                                onPress={()=>this.sendAnswer()}/>
+                <RemainTime/>
+                {gameStore.is_available_to_answer_quiz
+                &&
+                    <View style={styles.footer}>
+                        <View style={{flex:1,marginRight:10}}>
+                            <UserInput 
+                                icon={ANSWER_IC}
+                                placeholder="You only answer once..."
+                                onChangeText={(text)=>this.updateAnswer(text)} />
                         </View>
-                    }
+
+                        <Button 
+                            custom_width={80}
+                            label='Send'
+                            onPress={()=>this.sendAnswer()}/>
+                    </View>
+                }
 
             </View>
       

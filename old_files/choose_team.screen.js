@@ -20,7 +20,6 @@ import HeaderText from '../components/header_text.component'
 import fireStoreHelper from '../utils/firestore.helper';
 import TeamTitle from '../components/team_title.component';
 import MemberCell from '../components/member_cell.component'
-import RemainTime from '../components/remain_time.component'
 
 class TeamDetail extends Component{
     render(){
@@ -47,19 +46,88 @@ class TeamDetail extends Component{
 export default class ChooseTeamScreen extends Component{
     constructor(props){
         super(props);
+        this.state={
+            enable_join_game:false
+        }
         Orientation.lockToLandscape();
-
-        
     };
 
     
     goToGame=()=>{
-        if (!gameStore.enable_join_game) {
+        if (!this.state.enable_join_game) {
             Alert.alert('Not till time to start game ...')
         }
         else {
             this.props.navigation.navigate('game')
         }
+    }
+    
+    checkCountDownTimerSetUp=()=>{
+        //start_time === -1  => no one join game and update start time 
+        // => first user run till here will init answer timer
+        if (gameStore.game.answer_timer.start_time===-1){
+            fireStoreHelper.chooseQuiz({
+                game_id:gameStore.game.game_id,
+                round_index: 0,
+                quiz_index:0
+            });
+
+
+            /// set update_by_user_id equal user_id to prevent others init answer timer again
+            fireStoreHelper.updateCountDownTimer({
+                game_id:gameStore.game.game_id,
+                start_time:(new Date()).toString(),
+                update_by_user_id:userStore.user.user_id
+            })
+
+            //after all other users fail when update , set update_by_user_id === -1 for next answer timer update .
+            setTimeout(()=>{
+                fireStoreHelper.resetUpdateByUserIdValue({
+                    game_id:gameStore.game.game_id,
+                    update_by_user_id:-1
+                })
+            },3000)
+        }
+    }
+    
+    componentDidMount=()=>{
+        let countDownTimer=setInterval(()=>{
+            console.log('gameStoreOnChooseTeam ',gameStore.game)
+    
+            let date2=new Date(gameStore.game.enable_join_time)
+            let time2=date2.getTime()+gameStore.game.choose_team_duration*1000;
+            let date1=new Date();
+            let time1=date1.getTime();
+    
+            let second=Math.floor((time2-time1)/1000)
+
+            console.log('time start game :',gameStore.game.enable_join_time)
+            console.log('choose team duration :',gameStore.game.choose_team_duration)
+            console.log('remaining time ',second)
+            if (second<=-5){
+                clearInterval(countDownTimer),
+                this.setState({
+                    enable_join_game:true
+                })
+            }
+            else 
+            if (second<=0) 
+                {
+                    clearInterval(countDownTimer),
+                    this.autoChooseTeam();
+                    this.checkCountDownTimerSetUp();
+                    this.props.navigation.navigate('game')
+                    this.setState({
+                        enable_join_game:true
+                    })
+                }
+            else 
+                {
+                    this.setState({
+                        remaining_second:second
+                    })
+                }
+        },1000)
     }
 
     autoChooseTeam=async ()=>{
@@ -79,7 +147,7 @@ export default class ChooseTeamScreen extends Component{
     }
 
     chooseTeam=async (team_index)=>{
-        if (gameStore.enable_join_game){
+        if (this.state.enable_join_game){
             Alert.alert("Game started ,can't choose team")
             return ;
         }
@@ -104,6 +172,7 @@ export default class ChooseTeamScreen extends Component{
     }
 
     render(){
+
         return (
             <View style={styles.container}>
                 <View style={{position:'absolute',right:10,top:0}}>
@@ -114,9 +183,9 @@ export default class ChooseTeamScreen extends Component{
 
                 <HeaderText label='Teams'/>
                 <View style={{width:'100%',justifyContent:'center',alignItems:'center'}} >
-                    { gameStore.enable_join_game ?
+                    { this.state.enable_join_game ?
                         <Text>Game started </Text>
-                        : <RemainTime/>
+                        :<RemainTime/>
                     }
                 </View>
                 {

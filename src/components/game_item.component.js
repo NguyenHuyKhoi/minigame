@@ -19,7 +19,7 @@ export default class GameItem extends Component{
 
     componentDidMount=()=>{
         let countDownTimer=setInterval(()=>{
-            let date2=new Date(this.props.game.enable_join_time);
+            let date2=new Date(this.props.game.enable_start);
             let time2=date2.getTime();
             let date1=new Date();
             let time1=date1.getTime();
@@ -50,7 +50,6 @@ export default class GameItem extends Component{
     }
 
     render(){
-        console.log('item received :',this.props.game)
         return (
             <View style={styles.container}>
                 <View style={styles.row1}>
@@ -59,7 +58,7 @@ export default class GameItem extends Component{
                         <Text>Teams        :   {this.props.game.team_number}</Text>
                         <Text>Rounds   :   {this.props.game.round_number}</Text>
                     </View>
-                        <Text>Start at       : {this.renderTime(this.props.game.enable_join_time)}</Text>
+                        <Text>Start at       : {this.renderTime(this.props.game.enable_start)}</Text>
                 </View>
 
                 <View style={styles.row2}>

@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     ImageBackground,
-    FlatList,
     TouchableOpacity,
     TextInput,
     Alert,
@@ -22,6 +21,8 @@ import TextLink from '../components/text_link.component'
 import Answer from '../components/answer.component'
 
 import { GRAY, BLACK } from '../utils/palette';
+import WordRowText from '../components/word_row_text.component';
+import RemainTime from '../components/remain_time.component';
 
 @observer
 export default class KeywordAnswerScreen extends Component{
@@ -85,7 +86,13 @@ export default class KeywordAnswerScreen extends Component{
                     </View>
 
                     <HeaderText label={'Guess Keyword To Win !!!'}/>
-
+                    <View style={{width:'100%',flexDirection:'column',alignItems:'center'}}>
+                        <WordRowText 
+                            content={gameStore.current_round.keyword.correct_answer}
+                            is_show_content={gameStore.current_round.keyword.is_solved}
+                            is_disable={gameStore.current_round.keyword.is_picked && 
+                                !gameStore.current_round.keyword.is_solved}/>
+                    </View>
                     {/* <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
                         <Text style={{width:'70%',fontSize:18,color:BLACK,textAlign: 'center'}}>
                             {!gameStore.is_keyword_answer_time?gameStore.current_quiz.content:''}
@@ -115,6 +122,7 @@ export default class KeywordAnswerScreen extends Component{
                             }
                     </View>
                 </ScrollView>
+                <RemainTime/>
             </View>
         )
     }
@@ -124,7 +132,7 @@ const styles=StyleSheet.create({
     container:{
         flex:1,
         flexDirection:'column',
-        marginTop:10,
+        paddingVertical:10,
         backgroundColor:GRAY
     },
     scroll_view:{

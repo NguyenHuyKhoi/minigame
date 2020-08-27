@@ -4,7 +4,7 @@ import {
     Text,
     StyleSheet
 } from 'react-native'
-import {GREEN,WHITE,GRAY} from '../utils/palette'
+import {GREEN,WHITE,GRAY, DARK} from '../utils/palette'
 
 export default class Button extends Component{
     render(){
@@ -13,7 +13,7 @@ export default class Button extends Component{
                 style={[styles.container,
                      {width:this.props.custom_width!==undefined?this.props.custom_width:'100%'},
                      {backgroundColor:this.props.hight_light!==undefined?
-                        this.props.hight_light?GREEN:GRAY
+                        this.props.hight_light?GREEN:DARK
                         :GREEN}
                 ]} 
                 disabled={this.props.disabled!==undefined?this.props.disabled:false}
@@ -37,7 +37,8 @@ const styles=StyleSheet.create({
     },
     label:{
         fontSize:16,
-        color:WHITE
+        color:WHITE,
+        textAlign:'center'
     }
 
 })

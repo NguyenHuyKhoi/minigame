@@ -6,7 +6,6 @@ import database from '@react-native-firebase/database'
 import userStore from '../stores/user.store';
 import gameStore from '../stores/game.store';
 import {length,parseValues} from './custom_func'
-import answerTimerStore from '../stores/answer_timer.store';
 
 class FireStoreHelper {
     constructor(){
@@ -68,20 +67,41 @@ class FireStoreHelper {
                 })    
     };
 
-    findGame=async (filter)=>{
+    listenGameChange=async (filter)=>{
         await this.db.ref('games/'+filter.game_id)
             .on('value',snapshot=>{
                 gameStore.updateGame(snapshot.val())
-            })
-
-        await this.db.ref('games/'+filter.game_id)
-            .on('child_changed',snapshot=>{
-                if (snapshot.key!=='answer_timer') return ;
-                console.log('child_changed_snapshot',snapshot.val())
-                answerTimerStore.stop();
-                answerTimerStore.start(snapshot.val().start_time)
-            })
+        })
     }
+
+    listenCountdownTimerChange=async(filter)=>{
+        await this.db.ref('games/'+filter.game_id+'/countdown_timer/')
+            .on('value',snapshot=>{
+                const data=snapshot.val();
+
+                if (data.type==='not_start_by_anyone') {
+                    // no one join game before ,so this user can start count-down timer for choosing team :
+                    let date =new Date();
+                    fireStoreHelper.updateCountdownTimer({
+                         game_id:gameStore.game.game_id,
+                         duration:gameStore.game.countdown_timer.durations.choose_team,
+                         type:'choose_team',
+                         update_by_user_id:userStore.user.user_id,
+                         start_at: date.toString()
+                     })
+
+
+                }
+                else 
+                // not reset update_by_user_id action
+                if (data.update_by_user_id!==-1){
+                    gameStore.startCountdownTimer(data)
+                }
+
+    })
+    }
+
+        
 
     chooseTeam=async (data)=>{
         console.log('chooseTeamData :',data)
@@ -127,6 +147,7 @@ class FireStoreHelper {
             })
             .then(()=>console.log('Send answer successfully '))
     }
+
     sendKeywordAnswer=async (data)=>{
         console.log('SendKeywordAnswerData :',data)
         let answer_index=length(gameStore.current_round.keyword.answers)
@@ -185,18 +206,36 @@ class FireStoreHelper {
 
     }
 
-    updateAnswerTimer=async (data)=>{
-        console.log('updateAnswerTimer :',data)
-        await this.db.ref('games/'+data.game_id+'/answer_timer/')
+    chooseRound=async(data)=>{
+        console.log('chooseRoundData :',data)
+        await this.db.ref('games/'+data.game_id)
             .update({
-                start_time:data.start_time,
-                update_by_user_id:data.update_by_user_id
+                current_round_index:data.round_index,
             })
+    }
+
+    
+
+    updateCountdownTimer=async (data)=>{
+        await this.db.ref('games/'+data.game_id+'/countdown_timer/')
+            .update({
+                duration:data.duration,
+                update_by_user_id:data.update_by_user_id,
+                type:data.type,
+                start_at:data.start_at
+            })
+
+        setTimeout(()=>{
+                this.resetUpdateByUserIdValue({
+                    game_id:gameStore.game.game_id,
+                    update_by_user_id:-1
+                })
+            },3000);
     }
 
     resetUpdateByUserIdValue=async (data)=>{
         console.log('resetUpdateBy...',data)
-        await this.db.ref('games/'+data.game_id+'/answer_timer/')
+        await this.db.ref('games/'+data.game_id+'/countdown_timer/')
             .update({
                 update_by_user_id:data.update_by_user_id
             })

@@ -3,15 +3,20 @@
         {
         "game_id":0,
         "round_number":2,
-        "enable_join_time":"2020-08-21T14:16:10+07:00",
-        "choose_team_duration":20,
         "team_number":2,
         "join_code":"23123",
-        "answer_time_per_quiz":25,
-        "keyword_answer_time":60,
         "current_round_index":0,
-        "answer_timer":{
-            "start_time":-1,
+        "enable_start":"2020-08-21T14:16:10+07:00",
+        "countdown_timer":{
+            "durations":{
+                "choose_team":10,
+                "answer_quiz":25,
+                "choose_quiz":20,
+                "answer_keyword":35
+            },
+            "start_at":-1,
+            "duration":-1,
+            "type":"not_start_by_anyone",
             "update_by_user_id":-1
         },
         "chats":[
@@ -142,7 +147,6 @@
                 "round_index":0,
                 "topic":"International",
                 "quiz_number":4,
-              
                 "current_quiz_index":0,
                 "quizzes":[
                     {
@@ -157,49 +161,9 @@
                                 "user_id":2,
                                 "user_name":"user2",
                                 "answer_time":"390"
-                            },
-                            {
-                                "answer_index":1,
-                                "content":"Organ123",
-                                "team_index":1,
-                                "user_id":4,
-                                "user_name":"user4",
-                                "answer_time":"150"
-                            },
-                            {
-                                "answer_index":2,
-                                "content":"Organ342",
-                                "team_index":1,
-                                "user_id":5,
-                                "user_name":"user5",
-                                "answer_time":"120"
-                            },
-                            {
-                                "answer_index":3,
-                                "content":"Organ324",
-                                "team_index":0,
-                                "user_id":2,
-                                "user_name":"user2",
-                                "answer_time":"61"
-                            },
-                            {
-                                "answer_index":4,
-                                "content":"Organ346",
-                                "team_index":1,
-                                "user_id":3,
-                                "user_name":"user3",
-                                "answer_time":"40"
-                            },
-                            {
-                                "answer_index":5,
-                                "content":"Organization",
-                                "team_index":1,
-                                "user_id":5,
-                                "user_name":"user5",
-                                "answer_time":"2"
                             }
                         ],
-                        "is_picked":true,
+                        "is_picked":false,
                         "is_solved":false,
                         "solved_by_user_id":"",
                         "solved_by_team_index":""
@@ -353,7 +317,7 @@
                     "piece_columns":3,
                     "piece_rows":2,
                     "url":"https://firebasestorage.googleapis.com/v0/b/minigame-b0e19.appspot.com/o/hint_images%2Ftornado.jpg?alt=media&token=e2a64281-d726-487b-8dff-c5b7f28313d8",
-                    "piece_status":[0,0,0,0,0,0]
+                    "piece_status":[1,0,1,1,0,0]
                 }   
             }
         ]
@@ -415,42 +379,42 @@
             "round_number":2,
             "team_number":2,
             "join_code":"23123",
-            "enable_join_time":"2020-08-21T14:16:10+07:00"
+            "enable_start":"2020-08-21T14:16:10+07:00"
         },
         {
             "game_id":1,
             "round_number":4,
             "team_number":2,
             "join_code":"23123",
-            "enable_join_time":"2020-08-27T11:33:10+07:00"
+            "enable_start":"2020-08-27T11:33:10+07:00"
         },
         {
             "game_id":2,
             "round_number":1,
             "team_number":2,
             "join_code":"23123",
-            "enable_join_time":"2020-08-29T11:33:10+07:00"
+            "enable_start":"2020-08-29T11:33:10+07:00"
         },
         {
             "game_id":3,
             "round_number":1,
             "team_number":2,
             "join_code":"23123",
-            "enable_join_time":"2020-08-28T11:33:10+07:00"
+            "enable_start":"2020-08-28T11:33:10+07:00"
         },
         {
             "game_id":4,
             "round_number":3,
             "team_number":2,
             "join_code":"23123",
-            "enable_join_time":"2020-08-25T11:33:10+07:00"
+            "enable_start":"2020-08-25T11:33:10+07:00"
         },
         {
             "game_id":5,
             "round_number":4,
             "team_number":2,
             "join_code":"23123",
-            "enable_join_time":"2020-08-28T11:33:10+07:00"
+            "enable_start":"2020-08-28T11:33:10+07:00"
         }
 
     ]

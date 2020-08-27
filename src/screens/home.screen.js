@@ -42,14 +42,21 @@ export default class HomeScreen extends Component{
             return 
         } 
         else {
-            await fireStoreHelper.findGame({
+            await fireStoreHelper.listenGameChange({
                 game_id:game.game_id,
             });
-            
-            this.props.navigation.navigate('choose_team')
-        }
+
+            setTimeout(()=>{
+                fireStoreHelper.listenCountdownTimerChange({
+                    game_id:game.game_id,
+                })
+                this.props.navigation.navigate('choose_team')
+                }
+                ,1000);
+
 
     }
+}
 
     setTime=()=>{
         //get current date 
@@ -64,7 +71,6 @@ export default class HomeScreen extends Component{
     render(){
         return (
             <View style={styles.container}>
-
                 <View style={{position:'absolute',right:0,top:0}}>
                     <Button custom_width={100}
                         onPress={()=>this.signOut()}

@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     TouchableOpacity,
-    FlatList,
     Alert,
     Modal,
     TextInput
@@ -14,15 +13,19 @@ import gameStore from '../stores/game.store'
 import userStore from '../stores/user.store'
 import {observer} from 'mobx-react'
 import fireStoreHelper from '../utils/firestore.helper'
-import answerTimerStore from '../stores/answer_timer.store'
-
+import Button from '../components/button.component'
+import TextLink from '../components/text_link.component'
+import HeaderText  from '../components/header_text.component'
+import WordRowText from '../components/word_row_text.component'
+import KeywordAnswerModal from '../components/keyword_answer_modal.component'
+import { GRAY } from '../utils/palette'
+import uIStore from '../stores/ui.store'
 @observer
 export default class AllQuizScreen extends Component{
 
     constructor(props){
         super(props)
         this.state={
-            modal_visible:false,
             keyword_answer:''
         }
     }
@@ -44,28 +47,31 @@ export default class AllQuizScreen extends Component{
     renderQuizzes=()=>{
         return (
             gameStore.current_round.quizzes.map(quiz=>
-                <TouchableOpacity style={{marginVertical:10}}
-                    onPress={()=>this.goToAnswer(quiz)}>
-                    <Text >Quiz  {quiz.quiz_index} :
-                         {quiz.is_picked ? quiz.is_solved ?quiz.correct_answer :'?????????':'No picked '}</Text>
-                </TouchableOpacity>    
+                <View style={{margin:3}}>         
+                    <WordRowText 
+                        content={quiz.correct_answer}
+                        is_show_content={quiz.is_solved}
+                        is_disable={quiz.is_picked && !quiz.is_solved}/>
+                </View>
             )
         )
     }
 
-    onPressKeyWorkAnswer=()=>{
-        this.setState({
-            modal_visible:!this.state.modal_visible
-        })
+    openModal=()=>{
+        uIStore.openKeywordAnswerModal()
+    }
+
+    closeModal=()=>{
+        uIStore.closeKeywordAnswerModal()
     }
 
     updateKeywordAnswer=(text)=>{
-        console.log('updateKeywordAnswer :',text)
         this.setState({
             ...this.state,
             keyword_answer:text
         })
     }
+
 
     sendKeywordAnswer=async ()=>{
         if (this.state.keyword_answer===''){
@@ -74,33 +80,20 @@ export default class AllQuizScreen extends Component{
         }
 
         let keyword_answer=this.state.keyword_answer
-        await this.closeKeywordModal()
 
-        // if (gameStore.current_round.keyword.is_solved){
-        //     Alert.alert('Keyword has been guessed successfully ..., can answered more ')
-        //     return 
-        // }
-
-        // if (gameStore.is_keyword_answered_by_user){
-        //     Alert.alert('You answers keyword ...,can answered more ')
-        //     return ;
-        // }
-       
-
-        
-     
         console.log('keywordAnswer ',keyword_answer)
         await fireStoreHelper.sendKeywordAnswer({
             game_id:gameStore.game.game_id,
             round_index:gameStore.current_round.round_index,
             content:keyword_answer,
             team_index:gameStore.user_team_index,
-            answer_time:answerTimerStore.remaining_time,
+            answer_time:gameStore.remaining_time,
             user:userStore.user
         });
 
          Alert.alert('Submit keyword answer successfully:',keyword_answer);
 
+         this.closeModal()
         if (gameStore.current_round.keyword.correct_answer===keyword_answer){
              Alert.alert("Correct Keyword answer ...")
             await fireStoreHelper.confirmKeywordSolver({
@@ -120,20 +113,11 @@ export default class AllQuizScreen extends Component{
                 round_index:gameStore.current_round.round_index,
             })
 
-            const next_indexes =fireStoreHelper.findNextIndexes({
-                keyword_guessed:true
+            gameStore.switchToAnswerQuiz({
+                quiz:null,
+                next_round:true
             })
-
-            if (next_indexes===null) {
-                gameStore.finishGame();
-                return ;
-            }
-
-            await fireStoreHelper.chooseQuiz({
-                game_id:gameStore.game.game_id,
-                round_index:next_indexes.round_index,
-                quiz_index:next_indexes.quiz_index
-            })
+            
         }
         else {
              Alert.alert("wrong answer ...")
@@ -144,60 +128,43 @@ export default class AllQuizScreen extends Component{
         
     }
 
-    closeKeywordModal=async ()=>{
-        await this.setState({
-            keyword_answer:'',
-            modal_visible:false
-        })
-    }
     render(){
-        const { modal_visible } = this.state;
         return (
-            <View style={[styles.container,{backgroundColor:'transparent'}]}>
-                  <View style={{width:'100%',flexDirection:'row',backgroundColor:'transparent',justifyContent:'flex-end'}}>
-                    <TouchableOpacity 
-                        style={{width:100,height:40,borderRadius:10,justifyContent:'center',alignItems:'center',
-                        backgroundColor:gameStore.is_available_to_answer_keyword?'green':'gray'}}
-                        disabled={!gameStore.is_available_to_answer_keyword}
+            <View style={[styles.container]}>
 
-                        onPress={()=>this.onPressKeyWorkAnswer()}>
-                        <Text>Answer keyword</Text>
-                    </TouchableOpacity>
-                </View>
-                {
-                    this.renderQuizzes()
-                }
+                    <KeywordAnswerModal
+                        visible={uIStore.keyword_answer_modal_open}
+                        closeModal={()=>this.closeModal()}
+                        sendKeywordAnswer={()=>this.sendKeywordAnswer()}
+                        updateKeywordAnswer={(text)=>this.updateKeywordAnswer(text)}/>
 
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={modal_visible}
-                    onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                    }}>
-                    <View style={styles.centeredView}>
-                        <View style={styles.modalView}>
-                            <Text style={styles.modalText}>Enter your guessing keyword, note that you only can answer once</Text>
-                            <TextInput 
-                                value={this.state.keyword_answer}
-                                onChangeText={(text)=>this.updateKeywordAnswer(text)}></TextInput>
-
-                        <View style={styles.modalButtonsContainer}>
-                            <TouchableOpacity
-                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                                onPress={() => {this.closeKeywordModal()}}>
-                                <Text style={styles.textStyle}>Answer later </Text>
-                            </TouchableOpacity>
-
-                             <TouchableOpacity
-                                style={{ ...styles.openButton, backgroundColor: "#2196F3" }}
-                                onPress={() => {this.sendKeywordAnswer()}}>
-                                <Text style={styles.textStyle}>Answer now !</Text>
-                            </TouchableOpacity>
-                         </View>
+                    <View style={{position:'absolute',right:10,bottom:10}}>
+                        <Button custom_width={100}
+                            onPress={()=>this.openModal()}
+                            disabled={!gameStore.is_available_to_answer_keyword}
+                            hight_light={gameStore.is_available_to_answer_keyword}
+                            label="Answer Keyword"/>
                     </View>
+                    <View style={styles.header}>
+                        <HeaderText label={gameStore.current_round.topic.toUpperCase()}></HeaderText>
+                        <TextLink label={'View keyword answers'}
+                            onPressLink={this.props.onPressKeywordAnswerLink}> </TextLink>
+                        <WordRowText content={gameStore.current_round.keyword.correct_answer}
+                            is_show_content={gameStore.current_round.keyword.is_solved}
+                            is_disable={gameStore.current_round.keyword.is_picked
+                                && !gameStore.current_round.keyword.is_solved}
+                        />
                     </View>
-                </Modal>
+
+                    <View style={styles.body}>
+                        <View style={styles.all_quiz_container}>
+                            {
+                                this.renderQuizzes()
+                            }
+                    </View>
+            </View>
+
+                
             </View>
         )
     }
@@ -207,46 +174,23 @@ const styles=StyleSheet.create({
     container:{
         flex:1,
         flexDirection:'column',
+        backgroundColor:GRAY,
+        alignItems:'center',
+        marginTop:10
+    },
+    header:{
+        flex:1,
+        justifyContent:'center',
+        alignItems:'center',
         alignItems:'center'
     },
-    modalButtonsContainer:{
-        flexDirection:'row',
-        justifyContent:'space-around'
+    body:{
+        flex:4,
+        justifyContent:'center',
+        alignItems:'center',
+        alignItems:'center'
     },
-    centeredView: {
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-        marginTop: 22
-      },
-      modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-          width: 0,
-          height: 2
-        },
-        shadowOpacity: 0.25,
-        shadowRadius: 3.84,
-        elevation: 5
-      },
-      openButton: {
-        backgroundColor: "#F194FF",
-        borderRadius: 20,
-        padding: 10,
-        elevation: 2
-      },
-      textStyle: {
-        color: "white",
-        fontWeight: "bold",
-        textAlign: "center"
-      },
-      modalText: {
-        marginBottom: 15,
-        textAlign: "center"
-      }
+    all_quiz_container:{
+        alignItems:'center'
+    }
 })

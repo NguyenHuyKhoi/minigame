@@ -13,10 +13,13 @@ import gameStore from '../stores/game.store'
 import userStore from '../stores/user.store'
 export default class GameScreen extends Component{
     goToAnswer=()=>{
-        Alert.alert('Press Answer')
         this.props.navigation.navigate('answer')
     }
 
+
+    goToKeywordAnswer=()=>{
+        this.props.navigation.navigate('keyword_answer')
+    }
     render(){
         return(
         <View style={styles.container}>
@@ -27,7 +30,9 @@ export default class GameScreen extends Component{
 
                   
             </View>
-            <AllQuizScreen style={styles.col2}/>
+            <AllQuizScreen style={styles.col2}
+                onPressKeywordAnswerLink={()=>this.goToKeywordAnswer()}
+            />
 
         </View>
         )

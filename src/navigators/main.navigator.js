@@ -32,7 +32,7 @@ export default MainNavigator =createStackNavigator(
         result:ResultScreen
     },
     {
-        initialRouteName:'login',
+        initialRouteName:'home',
         headerMode :'none',
         navigationOptions:{
             headerVisible:false

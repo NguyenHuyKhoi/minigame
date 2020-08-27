@@ -4,7 +4,6 @@ import {
     Text,
     StyleSheet,
     ImageBackground,
-    FlatList,
     TouchableOpacity,
     TextInput,
     Alert,

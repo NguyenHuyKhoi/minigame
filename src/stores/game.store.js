@@ -15,6 +15,7 @@ class GameStore{
     @observable game_list=null;
     @observable chat_type='team'
     @observable is_finished =false 
+    @observable time_outs=[];
 
     @observable remaining_time=null
     @observable is_running_timer =null
@@ -34,6 +35,25 @@ class GameStore{
         console.log('userStore :',userStore.user.user_name)
         console.log('user_team_index',res[0].team_index)
         return res[0].team_index;
+    }
+
+    @computed get user_team(){
+        if (this.user_team_index===-1) return null;
+        return this.game.teams[this.user_team_index]
+    }
+
+    @computed get user_info_in_team(){
+        if (this.user_team===null) return null;
+        if (this.user_member_index===-1) return null; 
+        return this.user_team.members[this.user_member_index]
+    }
+
+    @computed get user_member_index(){
+        if (this.user_team_index===-1) return -1;
+        let arr = this.user_team.members.filter(
+            member => member.user_id===userStore.user.user_id
+        )
+        return arr[0].member_index;
     }
 
     @computed get user_chat_index(){
@@ -124,7 +144,26 @@ class GameStore{
         && this.game.countdown_timer.type!=='choose_team')
     }
 
-    @observable time_outs=[];
+    @computed get score_of_current_quiz(){
+        if (this.current_quiz===null) return 0;
+       return  ( this.current_quiz.is_picked_by_user_id===userStore.user.user_id?
+        this.game.score.score_per_picked_quiz
+        :this.game.score.score_per_quiz )
+    }
+
+    @computed get unanswered_quiz_number(){
+        if (this.current_round===null) return 0;
+        return (this.current_round.quizzes.filter(
+            quiz => !quiz.is_picked
+        ).length)
+    }
+
+    @computed get score_of_keyword(){
+        return this.game.score.score_for_finally_guess_keyword
+            + this.game.score.bonus_per_quiz_on_guessing_keyword_early * this.unanswered_quiz_number
+    }
+
+
 
   
 
@@ -166,10 +205,10 @@ class GameStore{
     }
 
     @action switchToChooseQuiz=async()=>{
-        let timer =gameStore.game.countdown_timer;
+        let timer =this.game.countdown_timer;
         let date =new Date();
         await fireStoreHelper.updateCountdownTimer({
-            game_id:gameStore.game.game_id,
+            game_id:this.game.game_id,
             start_at:date.toString(),
             type:'choose_quiz',
             duration:timer.durations.choose_quiz,
@@ -179,32 +218,38 @@ class GameStore{
 
     @action switchToAnswerQuiz=async (data) => {
         // check if moving to next round and finish game :
-        let round_index=gameStore.current_round.round_index+(data.next_round===true)
-        if (round_index>=gameStore.game.round_number) {
+        let round_index=this.current_round.round_index+(data.next_round===true)
+        if (round_index>=this.game.round_number) {
             Alert.alert('Out out rounds , finish game')
+            
+            this.stopCountdownTimer();
+            fireStoreHelper.finishGame({
+                game_id:this.game.game_id
+            })
             return ;
         }
     
         await fireStoreHelper.chooseRound({
-            game_id:gameStore.game.game_id,
+            game_id:this.game.game_id,
             round_index:round_index
         })
 
         // pick random quiz from this round : 
-        let quiz= data.quiz!==null ? data.quiz:gameStore.pick_random_quiz;
-        let timer =gameStore.game.countdown_timer;
+        let quiz= data.quiz!==undefined ? data.quiz:this.pick_random_quiz;
+        let timer =this.game.countdown_timer;
         if (data.quiz===null) Alert.alert('Pick random quiz  : '+quiz.quiz_index)
             else Alert.alert('You chosen quiz  : '+quiz.quiz_index)
 
         await fireStoreHelper.chooseQuiz({
-            game_id:gameStore.game.game_id,
+            game_id:this.game.game_id,
             round_index:round_index,
-            quiz_index:quiz.quiz_index
+            quiz_index:quiz.quiz_index,
+            is_picked_by_user_id:data.is_picked_by_user_id!==undefined ?data.is_picked_by_user_id:null
         })
 
         let date =new Date();
         await fireStoreHelper.updateCountdownTimer({
-            game_id:gameStore.game.game_id,
+            game_id:this.game.game_id,
             start_at:date.toString(),
             type:'answer_quiz',
             duration:timer.durations.answer_quiz,
@@ -214,16 +259,16 @@ class GameStore{
 
     @action switchToAnswerKeyword=async()=>{
          await fireStoreHelper.chooseQuiz({
-            game_id:gameStore.game.game_id,
-            round_index:gameStore.current_round.round_index,
+            game_id:this.game.game_id,
+            round_index:this.current_round.round_index,
             quiz_index:-1
         })
         Alert.alert('Time to guess keyword ')
 
-        let timer =gameStore.game.countdown_timer;
+        let timer =this.game.countdown_timer;
         let date =new Date();
         await fireStoreHelper.updateCountdownTimer({
-            game_id:gameStore.game.game_id,
+            game_id:this.game.game_id,
             start_at:date.toString(),
             type:'answer_keyword',
             duration:timer.durations.answer_keyword,
@@ -234,7 +279,7 @@ class GameStore{
 
     @action updateCountdownTimer=()=>{
         //if someone updated timer to next stage before ,stop now ;
-        let timer =gameStore.game.countdown_timer
+        let timer =this.game.countdown_timer
         if (timer.update_by_user_id!==-1) return ;
         
         // stages when time out  : 
@@ -247,19 +292,17 @@ class GameStore{
             case 'choose_team':{
                 this.switchToAnswerQuiz({
                     next_round:false,
-                    quiz:null
                 }) 
                 break;
             }
 
             case 'answer_quiz':{
-                if (gameStore.pick_random_quiz===null) {
+                if (this.pick_random_quiz===null) {
                    this.switchToAnswerKeyword()
                 }
                 else {
                    this.switchToAnswerQuiz({
                     next_round:false,
-                    quiz:null
                 }); 
                 }
 
@@ -269,7 +312,6 @@ class GameStore{
             case 'answer_keyword':{
                 this.switchToAnswerQuiz({
                     next_round:true,
-                    quiz:null
                 }); 
                 break
             }
@@ -278,7 +320,6 @@ class GameStore{
                 uIStore.closeChooseQuizModal()
                 this.switchToAnswerQuiz({
                     next_round:false,
-                    quiz:null
                 });
                 
                 break;

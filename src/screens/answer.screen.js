@@ -55,7 +55,7 @@ export default class AnswerScreen extends Component{
         return (
             answers!==null?answers.map(answer =>
                     <Answer on_left={answer.team_index===0} 
-                    is_true={gameStore.current_quiz && answer.content===gameStore.current_quiz.correct_answer} 
+                    is_true={gameStore.current_quiz && answer.content.toUpperCase()===gameStore.current_quiz.correct_answer.toUpperCase()} 
                     answer={answer}/>
             )
             :null
@@ -83,7 +83,7 @@ export default class AnswerScreen extends Component{
 
          Alert.alert('Submit answer successfully :'+this.state.answer);
 
-        if (gameStore.current_quiz.correct_answer===this.state.answer){
+        if (gameStore.current_quiz.correct_answer.toUpperCase()===this.state.answer.toUpperCase()){
              Alert.alert("Correct answer ...")
             await fireStoreHelper.confirmSolver({
                 game_id:gameStore.game.game_id,
@@ -92,6 +92,7 @@ export default class AnswerScreen extends Component{
                 user:userStore.user,
                 team_index:gameStore.user_team_index,
             })
+
 
             //after confirmSolver , no users can send answers and update answer time ,exclude solver 
             await fireStoreHelper.openHintPiece({
@@ -138,6 +139,7 @@ export default class AnswerScreen extends Component{
         await gameStore.switchToAnswerQuiz({
             next_round:false,
             quiz:quiz,
+            is_picked_by_user_id:userStore.user.user_id
         }) 
 
      

@@ -11,7 +11,14 @@ import AllQuizScreen from './all_quiz.screen'
 import fireStoreHelper from '../utils/firestore.helper'
 import gameStore from '../stores/game.store'
 import userStore from '../stores/user.store'
+
+import Orientation from 'react-native-orientation-locker'
 export default class GameScreen extends Component{
+
+    constructor(props){
+        super(props)
+        Orientation.lockToLandscape()
+    }
     goToAnswer=()=>{
         this.props.navigation.navigate('answer')
     }

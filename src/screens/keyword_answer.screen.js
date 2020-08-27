@@ -47,7 +47,7 @@ export default class KeywordAnswerScreen extends Component{
             answers!==null?answers.map(answer =>
                 <Answer 
                     on_left={answer.team_index===0} 
-                    is_true={gameStore.current_round && answer.content===gameStore.current_round.keyword.correct_answer} 
+                    is_true={gameStore.current_round && answer.content.toUpperCase()===gameStore.current_round.keyword.correct_answer.toUpperCase()} 
                     answer={answer}
                 />
             

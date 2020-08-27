@@ -16,6 +16,7 @@ import {observer} from 'mobx-react'
 import gameStore from '../stores/game.store'
 import { GRAY } from '../utils/palette'
 import { HIDDEN_IMG } from '../assets'
+import Orientation from 'react-native-orientation-locker'
 
 const image_size={
     //need to fix to resize with multi screens
@@ -25,7 +26,10 @@ const image_size={
 @observer
 export default class HintImageScreen extends Component{
 
-
+    constructor(props){
+        super(props)
+        Orientation.lockToLandscape()
+    }
     render(){
         const hint_image=gameStore.current_round.hint_image;
         // console.log('hint_image :',hint_image);
@@ -43,10 +47,10 @@ export default class HintImageScreen extends Component{
                                     <Image
                                         onPress={()=>{}}
                                         source={item===0?HIDDEN_IMG:null}
-                                        style={{width:image_size.width/hint_image.piece_rows,
+                                        style={{width:image_size.width/hint_image.piece_columns,
                                         resizeMode:'center',
-                                        height:image_size.height/hint_image.piece_columns,
-                                        borderWidth:2,
+                                        height:image_size.height/hint_image.piece_rows,
+                                        borderWidth:1,
                                         borderColor:GRAY}}>
                                     </Image>
                      

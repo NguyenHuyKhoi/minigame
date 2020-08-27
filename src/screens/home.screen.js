@@ -15,7 +15,7 @@ import gameStore from '../stores/game.store'
 import { observer } from 'mobx-react'
 import { GRAY } from '../utils/palette'
 import HeaderText from '../components/header_text.component'
-
+import Orientation from 'react-native-orientation-locker'
 import GameItem from '../components/game_item.component'
 
 @observer
@@ -26,6 +26,9 @@ export default class HomeScreen extends Component{
         this.state={
             refresh :false
         }
+
+        Orientation.lockToLandscape();
+
     }
     componentDidMount=async ()=>{
         await fireStoreHelper.getGamesList();

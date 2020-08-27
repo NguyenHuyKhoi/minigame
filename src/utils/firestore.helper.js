@@ -173,6 +173,16 @@ class FireStoreHelper {
                 solved_by_team_index:data.team_index,
             })
             .then(()=>console.log('confirm solver successfully '))
+
+        let info=gameStore.user_info_in_team;
+        console.log('confirmSolver team_index :',gameStore.user_team_index)
+        console.log('confirmSolver member_index :',gameStore.user_member_index)
+        console.log('confirmSolver user_info_in_team :',gameStore.user_info_in_team)
+        console.log('confirmSolver score_of_current_quiz :',gameStore.score_of_current_quiz)
+        await this.db.ref('games/'+data.game_id+'/teams/'+data.team_index+'/members/'+info.member_index)
+            .update({
+                score:info.score+gameStore.score_of_current_quiz
+            })
     }
 
     confirmKeywordSolver=async (data)=>{
@@ -181,9 +191,19 @@ class FireStoreHelper {
             .update({
                 is_solved:true,
                 solved_by_user_id:data.user.user_id,
-                solved_by_team_index:data.team_index,
+                solved_by_team_index:data.team_index
             })
             .then(()=>console.log('confirm solver successfully '))
+
+        let info=gameStore.user_info_in_team;
+
+      
+    
+            await this.db.ref('games/'+data.game_id+'/teams/'+data.team_index+'/members/'+info.member_index)
+                .update({
+                    score:info.score+gameStore.score_of_keyword
+                })
+                .then(()=>console.log('confirm solver successfully '))
     }
 
     chooseQuiz=async(data)=>{
@@ -202,6 +222,8 @@ class FireStoreHelper {
         await this.db.ref('games/'+data.game_id+'/rounds/'+data.round_index+'/quizzes/'+data.quiz_index)
             .update({
                 is_picked:true,
+                is_picked_by_user_id:data.is_picked_by_user_id!==undefined?
+                        data.is_picked_by_user_id:null
             })
 
     }
@@ -302,49 +324,15 @@ class FireStoreHelper {
 
     }
 
-
-    notifyAnswerTimeOut=async (data)=>{
-        await this.db.ref('games/'+data.game_id+'/answer_timer/')
+    finishGame=async (data)=>{
+        console.log('finish Game ',data);
+        await this.db.ref('games/'+data.game_id)
             .update({
-                start_time:data.start_time,
-                current_quiz_index:data.current_quiz_index
+                is_finished:true
             })
     }
 
-    findNextIndexes=(data)=>{
-        console.log('findNextIndexes :',data)
-        if (data.keyword_guessed){
-            //move next round
-            if (gameStore.game.current_round_index<gameStore.game.round_number-1){
-                return {
-                    quiz_index:0,
-                    round_index:gameStore.current_round.round_index+1
-                }
-            }
-            else return null
-        }
-        else {
-            //move next quiz 
-            if (gameStore.picked_quizzes_number<gameStore.current_round.quiz_number){
-                return {
-                    quiz_index:gameStore.current_round.current_quiz_index+1,
-                    round_index:gameStore.current_round.round_index
-                }
-            }
-            else if (!gameStore.is_keyword_answer_time) return {
-                quiz_index:-1,
-                round_index:gameStore.current_round.round_index
-            } 
-            else if (gameStore.game.current_round_index<gameStore.game.round_number-1){
-                    return {
-                        quiz_index:0,
-                        round_index:gameStore.current_round.round_index+1
-                    }
-                }
-            else return null
-        }
-        
-    }
+
 }
 
 const fireStoreHelper=new FireStoreHelper();

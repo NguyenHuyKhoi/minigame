@@ -21,6 +21,8 @@ import fireStoreHelper from '../utils/firestore.helper';
 import TeamTitle from '../components/team_title.component';
 import MemberCell from '../components/member_cell.component'
 import RemainTime from '../components/remain_time.component'
+import uIStore from '../stores/ui.store';
+import RuleModal from '../components/rule_modal.component';
 
 class TeamDetail extends Component{
     render(){
@@ -103,13 +105,31 @@ export default class ChooseTeamScreen extends Component{
         console.log('max_member :',gameStore.game.teams[team_index].max_members)
     }
 
+    openRuleModal=()=>{
+        uIStore.openRuleModal();
+    }
+
+    closeRuleModal=()=>{
+        uIStore.closeRuleModal();
+    }
+
     render(){
         return (
             <View style={styles.container}>
+
+                <RuleModal 
+                    visible={uIStore.rule_modal_open}
+                    closeModal={()=>this.closeRuleModal()}/>
                 <View style={{position:'absolute',right:10,top:0}}>
                     <Button custom_width={100}
                         onPress={()=>this.goToGame()}
                         label="Game"/>
+                </View>
+
+                <View style={{position:'absolute',left:10,top:0}}>
+                    <Button custom_width={100}
+                        onPress={()=>this.openRuleModal()}
+                        label="Rule"/>
                 </View>
 
                 <HeaderText label='Teams'/>

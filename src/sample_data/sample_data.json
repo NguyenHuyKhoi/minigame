@@ -19,6 +19,12 @@
             "type":"not_start_by_anyone",
             "update_by_user_id":-1
         },
+        "score":{
+            "score_per_quiz":10,
+            "score_per_picked_quiz":15,
+            "score_for_finally_guess_keyword":20,
+            "bonus_per_quiz_on_guessing_keyword_early":5
+        },
         "chats":[
             {
                 "chat_type":"team",
@@ -103,13 +109,13 @@
                 "max_members":4,
                 "members":[
                     {
-                        "member_index":1,
+                        "member_index":0,
                         "user_id":0,
                         "user_name":"user0",
                         "score":0
                     },
                     {
-                        "member_index":2,
+                        "member_index":1,
                         "user_id":2,
                         "user_name":"user2",
                         "score":0
@@ -317,7 +323,7 @@
                     "piece_columns":3,
                     "piece_rows":2,
                     "url":"https://firebasestorage.googleapis.com/v0/b/minigame-b0e19.appspot.com/o/hint_images%2Ftornado.jpg?alt=media&token=e2a64281-d726-487b-8dff-c5b7f28313d8",
-                    "piece_status":[1,0,1,1,0,0]
+                    "piece_status":[0,0,0,0,0,0]
                 }   
             }
         ]

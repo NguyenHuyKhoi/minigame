@@ -32,15 +32,6 @@ export default class AllQuizScreen extends Component{
 
     goToAnswer=(quiz)=>{
         console.log('GoToAnswer()')
-        // if (!quiz.is_picked) {
-        //     Alert.alert('This quiz is not picked ...')
-        //     return 
-        // }
-
-        // this.props.navigation.navigate('answer',{
-        //     quiz_index:quiz.quiz_index,
-        //     is_solved:quiz.is_solved
-        // })
     }
     
 
@@ -94,7 +85,7 @@ export default class AllQuizScreen extends Component{
          Alert.alert('Submit keyword answer successfully:',keyword_answer);
 
          this.closeModal()
-        if (gameStore.current_round.keyword.correct_answer===keyword_answer){
+        if (gameStore.current_round.keyword.correct_answer.toUpperCase()===keyword_answer.toUpperCase()){
              Alert.alert("Correct Keyword answer ...")
             await fireStoreHelper.confirmKeywordSolver({
                 game_id:gameStore.game.game_id,

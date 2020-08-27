@@ -2,6 +2,7 @@ import {observable,action} from 'mobx'
 class UIStore{
     @observable choose_quiz_modal_open = false
     @observable keyword_answer_modal_open = false
+    @observable rule_modal_open = false
     @action closeChooseQuizModal=()=>{
         this.choose_quiz_modal_open=false
     }
@@ -16,6 +17,14 @@ class UIStore{
 
     @action openKeywordAnswerModal=()=>{
         this.keyword_answer_modal_open=true
+    }
+
+    @action closeRuleModal=()=>{
+        this.rule_modal_open=false
+    }
+
+    @action openRuleModal=()=>{
+        this.rule_modal_open=true
     }
 
 }

@@ -20,6 +20,7 @@ import WordRowText from '../components/word_row_text.component'
 import KeywordAnswerModal from '../components/keyword_answer_modal.component'
 import { GRAY } from '../utils/palette'
 import uIStore from '../stores/ui.store'
+import AnswerQuizDetailModal from '../components/answered_quiz_detail_modal.component'
 @observer
 export default class AllQuizScreen extends Component{
 
@@ -34,27 +35,25 @@ export default class AllQuizScreen extends Component{
         console.log('GoToAnswer()')
     }
     
+    openAnsweredQuizDetail=(quiz)=>{
+        uIStore.updateAnsweredQuizDetailModalData(quiz)
+        uIStore.openAnsweredQuizDetailModal();
+    }
 
     renderQuizzes=()=>{
         return (
             gameStore.current_round.quizzes.map(quiz=>
-                <View style={{margin:3}}>         
+                <View style={{margin:3}} key={quiz.quiz_index}>         
                     <WordRowText 
-                        content={quiz.correct_answer}
-                        is_show_content={quiz.is_solved}
-                        is_disable={quiz.is_picked && !quiz.is_solved}/>
+                        quiz={quiz}
+                        openAnsweredQuizDetail={()=>this.openAnsweredQuizDetail(quiz)}
+                        />
                 </View>
             )
         )
     }
 
-    openModal=()=>{
-        uIStore.openKeywordAnswerModal()
-    }
 
-    closeModal=()=>{
-        uIStore.closeKeywordAnswerModal()
-    }
 
     updateKeywordAnswer=(text)=>{
         this.setState({
@@ -84,14 +83,16 @@ export default class AllQuizScreen extends Component{
 
          Alert.alert('Submit keyword answer successfully:',keyword_answer);
 
-         this.closeModal()
+         this.closeKeywordAnswerModal()
         if (gameStore.current_round.keyword.correct_answer.toUpperCase()===keyword_answer.toUpperCase()){
              Alert.alert("Correct Keyword answer ...")
             await fireStoreHelper.confirmKeywordSolver({
                 game_id:gameStore.game.game_id,
                 round_index:gameStore.current_round.round_index,
                 user:userStore.user,
-                team_index:gameStore.user_team_index,
+                team_index:gameStore.user_team_index!==-1?gameStore.user_team_index:null,
+                team_name:gameStore.user_team!==null?gameStore.user_team.team_name:null
+                
             })
 
             await fireStoreHelper.openAllHintPiece({
@@ -122,16 +123,24 @@ export default class AllQuizScreen extends Component{
     render(){
         return (
             <View style={[styles.container]}>
-
+                    {console.log('AnswerQuizDetailOnAllQuiz :',uIStore.answered_quiz_detail_modal_data)}
+                    {uIStore.answered_quiz_detail_modal_data!==null?
+                        <AnswerQuizDetailModal
+                            visible={uIStore.answered_quiz_detail_modal_open}
+                            closeModal={()=>uIStore.closeAnsweredQuizDetailModal()}
+                            quiz={uIStore.answered_quiz_detail_modal_data}
+                        />
+                        :null
+                    }
                     <KeywordAnswerModal
                         visible={uIStore.keyword_answer_modal_open}
-                        closeModal={()=>this.closeModal()}
+                        closeModal={()=>uIStore.closeKeywordAnswerModal()}
                         sendKeywordAnswer={()=>this.sendKeywordAnswer()}
                         updateKeywordAnswer={(text)=>this.updateKeywordAnswer(text)}/>
 
                     <View style={{position:'absolute',right:10,bottom:10}}>
                         <Button custom_width={100}
-                            onPress={()=>this.openModal()}
+                            onPress={()=>uIStore.openKeywordAnswerModal()}
                             disabled={!gameStore.is_available_to_answer_keyword}
                             hight_light={gameStore.is_available_to_answer_keyword}
                             label="Answer Keyword"/>
@@ -140,10 +149,8 @@ export default class AllQuizScreen extends Component{
                         <HeaderText label={gameStore.current_round.topic.toUpperCase()}></HeaderText>
                         <TextLink label={'View keyword answers'}
                             onPressLink={this.props.onPressKeywordAnswerLink}> </TextLink>
-                        <WordRowText content={gameStore.current_round.keyword.correct_answer}
-                            is_show_content={gameStore.current_round.keyword.is_solved}
-                            is_disable={gameStore.current_round.keyword.is_picked
-                                && !gameStore.current_round.keyword.is_solved}
+                        <WordRowText quiz={gameStore.current_round.keyword}
+
                         />
                     </View>
 

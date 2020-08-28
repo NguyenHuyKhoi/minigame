@@ -17,39 +17,46 @@ const char_cell_size={
 export class CharCell extends Component{
     render(){
         return (
-            <TouchableOpacity 
+            <View 
                 style={{width:char_cell_size.width,height:char_cell_size.height,
                     justifyContent:'center',alignItems:'center',
                     borderWidth:1,borderColor:BLUE}}>
                 {
-                    this.props.is_show_content ?
+                    this.props.is_solved ?
                     <Text>{this.props.char}</Text>
-                        :this.props.is_disable?
+                        :this.props.is_picked?
                         <Image source={null} style={{flex:1,backgroundColor:DARK,aspectRatio:1,resizeMode:'stretch'}} />
                             : <Image source={HIDDEN_IMG} style={{flex:1,aspectRatio:1,resizeMode:'stretch'}} />
 
 
                 }
-            </TouchableOpacity>
+            </View>
         )
     }
 }
 
 export default class WordRowText extends Component{
     render(){
-        const content=this.props.content.toUpperCase().split('')
-        const is_show_content=this.props.is_show_content ;
-        const is_disable =this.props.is_disable;
+        const quiz=this.props.quiz;
+        const correct_answer=quiz.correct_answer.toUpperCase().split('')
+        const is_picked=quiz.is_picked ;
+        const is_solved =quiz.is_solved;
 
+        // quiz has 3 status : 
+        //not picked                => question mark background
+        //picked and can't solved   => gray background
+        //picked and solved         => transparent background 
         return (
-            <View style={{flexDirection:'row'}}>
+            <TouchableOpacity style={{flexDirection:'row'}}
+                // disabled={!is_solved}
+                onPress={this.props.openAnsweredQuizDetail}>
                 {
-                    content.map(char=>{
+                    correct_answer.map(char=>{
                         return (    
-                            <CharCell char={char} is_show_content={is_show_content} is_disable={is_disable}/>
+                            <CharCell char={char} is_picked={is_picked} is_solved={is_solved}/>
                     )})
                 }
-            </View>
+            </TouchableOpacity>
         )
     }
 }

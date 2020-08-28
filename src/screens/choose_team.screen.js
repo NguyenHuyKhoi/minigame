@@ -30,7 +30,7 @@ class TeamDetail extends Component{
         console.log('team detail receiver :',team)
         return (
             <View style={{flex:1,flexDirection:'column',marginTop:10,marginHorizontal:10}}>
-                <TeamTitle chooseTeam={this.props.chooseTeam} team={this.props.team}/>
+                <TeamTitle chooseTeam={this.props.chooseTeam} team={this.props.team} score={this.props.score}/>
                 <FlatList 
                     data={team.members}
                     keyExtractor={(item)=>item.id}
@@ -139,11 +139,29 @@ export default class ChooseTeamScreen extends Component{
                         : <RemainTime/>
                     }
                 </View>
+
+                {
+                    gameStore.user_team_index===-1 ?
+                    <View style={{width:'100%',justifyContent:'center',alignItems:'center'}} >
+                            <Text>Press on team name to choose team .</Text>
+                    </View>
+                    : null
+                }
                 {
                     gameStore.game!==null &&
                     <View style={{flex:1,flexDirection:'row'}}>    
-                        <TeamDetail style={{flex:1}} team={gameStore.game.teams[0]} chooseTeam={()=>this.chooseTeam(gameStore.game.teams[0].team_index)}/>
-                        <TeamDetail style={{flex:1}} team={gameStore.game.teams[1]} chooseTeam={()=>this.chooseTeam(gameStore.game.teams[1].team_index)}/>
+                        <TeamDetail 
+                            style={{flex:1}} 
+                            team={gameStore.game.teams[0]} 
+                            chooseTeam={()=>this.chooseTeam(gameStore.game.teams[0].team_index)}
+                            score={gameStore.score_of_team_0}
+                            />
+                        <TeamDetail 
+                            style={{flex:1}} 
+                            team={gameStore.game.teams[1]} 
+                            chooseTeam={()=>this.chooseTeam(gameStore.game.teams[1].team_index)}
+                            score={gameStore.score_of_team_1}
+                            />
                     </View>
                 }
             </View>

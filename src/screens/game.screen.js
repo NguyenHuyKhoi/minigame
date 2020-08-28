@@ -24,15 +24,24 @@ export default class GameScreen extends Component{
     }
 
 
+
+
     goToKeywordAnswer=()=>{
         this.props.navigation.navigate('keyword_answer')
     }
+
+    goToChat=()=>{
+        this.props.navigation.navigate('chat')
+    }
+    
     render(){
         return(
         <View style={styles.container}>
             <View style={styles.col1}>
                     <HintImageScreen style={styles.image}/>
-                     <CurrentQuizScreen onPressAnswer={()=>this.goToAnswer()} 
+                     <CurrentQuizScreen 
+                        onPressAnswer={()=>this.goToAnswer()} 
+                        onPressChat= {()=>this.goToChat()}
                         style={styles.currentQuiz}/> 
 
                   

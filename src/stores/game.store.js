@@ -163,6 +163,26 @@ class GameStore{
             + this.game.score.bonus_per_quiz_on_guessing_keyword_early * this.unanswered_quiz_number
     }
 
+    //using mobx-utils if using param as  team_index :0,1,2,... for many teams 
+    @computed get score_of_team_0(){
+        let total_score=0;
+        if (gameStore.game.teams[0].members===undefined) return 0;
+        gameStore.game.teams[0].members.forEach(
+            member=>total_score=total_score+member.score
+        );
+
+        return total_score
+    }
+
+    @computed get score_of_team_1(){
+        let total_score=0;
+        if (gameStore.game.teams[1].members===undefined) return 0;
+        gameStore.game.teams[1].members.forEach(
+            member=>total_score=total_score+member.score
+        );
+        return total_score
+    }
+
 
 
   

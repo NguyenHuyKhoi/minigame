@@ -90,7 +90,8 @@ export default class AnswerScreen extends Component{
                 round_index:gameStore.current_round.round_index,
                 quiz_index:gameStore.current_quiz.quiz_index,
                 user:userStore.user,
-                team_index:gameStore.user_team_index,
+                team_index:gameStore.user_team_index!==-1?gameStore.user_team_index:null,
+                team_name:gameStore.user_team!==null?gameStore.user_team.team_name:null
             })
 
 
@@ -179,10 +180,7 @@ export default class AnswerScreen extends Component{
                         </Text>
                         {!gameStore.is_keyword_answer_time?
                             <WordRowText 
-                                content={gameStore.current_quiz.correct_answer}
-                                is_show_content={gameStore.current_quiz.is_solved}
-                                is_disable={gameStore.current_quiz.is_picked && 
-                                        !gameStore.current_quiz.is_solved}/>
+                                quiz={gameStore.current_quiz}/>
                             :null
                         }
                     </View>

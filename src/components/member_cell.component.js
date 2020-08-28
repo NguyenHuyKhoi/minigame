@@ -12,14 +12,18 @@ export default class MemberCell extends Component{
     render(){
         return (
             <View style={[styles.container,{ backgroundColor:this.props.index%2===0?GRAY:WHITE}]}>
-                <View style={styles.row1}>
+                <View style={styles.col1}>
                     <Text style={styles.text}>{this.props.index+1}</Text>
                 </View>
-                <View style={styles.row2}>
+                <View style={styles.col2}>
                     <Text style={[styles.text,
                             {fontWeight:this.props.member.user_id===userStore.user.user_id?'bold':'normal',
                             color:this.props.member.user_id===userStore.user.user_id?GREEN:BLACK}]}> 
                             {this.props.member.user_name} </Text>
+                   
+                </View>
+
+                <View style={styles.col3}>
                     <Text style={styles.text}>Score : {this.props.member.score}</Text>
                 </View>
             </View>
@@ -31,17 +35,21 @@ const styles=StyleSheet.create({
     container:{
         height:40,
         flexDirection:'row',
-        justifyContent:'space-around',
     },
-    row1:{
+    col1:{
         flex:1,
         justifyContent:'center',
         alignItems:'center',
     },
-    row2:{
-        flex:5,
+    col2:{
+        flex:4,
+        justifyContent:'center',
+        alignItems:'center'
+    },
+    col3:{
+        flex:2,
         flexDirection:'row',
-        justifyContent:'space-around',
+        justifyContent:'flex-start',
         alignItems:'center'
     },
     text:{

@@ -88,10 +88,7 @@ export default class KeywordAnswerScreen extends Component{
                     <HeaderText label={'Guess Keyword To Win !!!'}/>
                     <View style={{width:'100%',flexDirection:'column',alignItems:'center'}}>
                         <WordRowText 
-                            content={gameStore.current_round.keyword.correct_answer}
-                            is_show_content={gameStore.current_round.keyword.is_solved}
-                            is_disable={gameStore.current_round.keyword.is_picked && 
-                                !gameStore.current_round.keyword.is_solved}/>
+                            quiz={gameStore.current_round.keyword}/>
                     </View>
                     {/* <View style={{width:'100%',justifyContent:'center',alignItems:'center'}}>
                         <Text style={{width:'70%',fontSize:18,color:BLACK,textAlign: 'center'}}>

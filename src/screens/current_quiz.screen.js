@@ -39,6 +39,12 @@ export default class CurrentQuizScreen extends Component{
                     :null
                 }
 
+                <View style={{position:'absolute',left:10,bottom:10}}>
+                    <Button custom_width={100}
+                        onPress={this.props.onPressChat}
+                        label="Chat"/>
+                </View>
+
                 <HeaderText label={ !gameStore.is_keyword_answer_time?
                             'Quiz '+gameStore.current_quiz.quiz_index
                             :'Guess keyword'}/>

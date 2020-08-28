@@ -170,7 +170,9 @@ class FireStoreHelper {
             .update({
                 is_solved:true,
                 solved_by_user_id:data.user.user_id,
+                solver_by_user_name:data.user.user_name,
                 solved_by_team_index:data.team_index,
+                solved_by_team_name:data.team_name
             })
             .then(()=>console.log('confirm solver successfully '))
 
@@ -191,7 +193,9 @@ class FireStoreHelper {
             .update({
                 is_solved:true,
                 solved_by_user_id:data.user.user_id,
-                solved_by_team_index:data.team_index
+                solved_by_user_name:data.user.user_name,
+                solved_by_team_index:data.team_index,
+                solved_by_team_name:data.team_name
             })
             .then(()=>console.log('confirm solver successfully '))
 

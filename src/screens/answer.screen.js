@@ -66,7 +66,7 @@ export default class AnswerScreen extends Component{
     
     sendAnswer=async  ()=>{
         if (this.state.answer===''){
-             Alert.alert('answer is empty ');
+             Alert.alert('Answer is empty .');
             return 
         }
 
@@ -81,10 +81,9 @@ export default class AnswerScreen extends Component{
             user:userStore.user
         });
 
-         Alert.alert('Submit answer successfully :'+this.state.answer);
 
         if (gameStore.current_quiz.correct_answer.toUpperCase()===this.state.answer.toUpperCase()){
-             Alert.alert("Correct answer ...")
+             Alert.alert("Correct answer ... Your team earned "+gameStore.score_of_current_quiz+" pts .")
             await fireStoreHelper.confirmSolver({
                 game_id:gameStore.game.game_id,
                 round_index:gameStore.current_round.round_index,
@@ -112,7 +111,7 @@ export default class AnswerScreen extends Component{
             }
         }
         else {
-             Alert.alert("Wrong answer")
+             Alert.alert("Wrong answer ...")
         }
 
         this.setState({

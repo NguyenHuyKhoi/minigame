@@ -74,10 +74,26 @@ class GameStore{
     }
 
     @computed get pick_random_quiz(){
-        if (!this.current_round) return null;
-        const arr= this.current_round.quizzes.filter(quiz=>!quiz.is_picked);
-        if (arr.length===0) return null;
-        return (arr[Math.floor(Math.random()*arr.length)])
+        //because many clients may send requests to pick  random quizzes to DB when time out a quiz answer time
+        //check that any client has picked next quiz and others don't need to pick any more is not used on concurrent condition
+        //=> many quizzes have picked
+        // if (!this.current_round) return null;
+        // const arr= this.current_round.quizzes.filter(quiz=>!quiz.is_picked);
+        // if (arr.length===0) return null;
+        // return (arr[Math.floor(Math.random()*arr.length)])
+
+
+        //=> solution : random quiz is next to current quiz 
+        //=> all client that send same next quiz requests based same current quiz 
+        if (gameStore.picked_quizzes_number===0) return gameStore.current_round.quizzes[0];
+        let i=gameStore.current_round.current_quiz_index;
+        while (true){
+            i++;
+            if (i===gameStore.current_round.quiz_number) i=0;
+            if (gameStore.current_round.quizzes[i].is_picked===false)  break
+        };
+
+        return gameStore.current_round.quizzes[i];
     }
 
     @computed get current_quiz(){
@@ -132,16 +148,21 @@ class GameStore{
     }
 
     @computed get out_of_quizzes(){
-        return (this.current_round.quizzes.filter(quiz=>quiz.is_picked).length
-                ===this.current_round.quiz_number)
+        return (this.picked_quizzes_number===this.current_round.quiz_number)
     }
 
 
     @computed get enable_join_game(){
-        console.log('enable_join_game',this.game===null,this.game.countdown_timer.type)
         return (this.game 
         && this.game.countdown_timer.type!=='not_start_by_anyone'
         && this.game.countdown_timer.type!=='choose_team')
+    }
+
+    @computed get is_game_finished(){
+        if (!this.game) return false ;
+        if (this.game.is_finished===undefined) return false 
+        if (!this.game.is_finished) return false;
+        return true;
     }
 
     @computed get score_of_current_quiz(){
@@ -215,6 +236,11 @@ class GameStore{
         if (!this.is_running_timer) return ;
         this.remaining_time--;
 
+        if (this.game.is_finished!==undefined
+            && this.game.is_finished===true){
+                this.stopCountdownTimer();
+            }
+
         if (this.remaining_time<=0 ){
             this.stopCountdownTimer();
             this.updateCountdownTimer();
@@ -240,10 +266,10 @@ class GameStore{
         // check if moving to next round and finish game :
         let round_index=this.current_round.round_index+(data.next_round===true)
         if (round_index>=this.game.round_number) {
-            Alert.alert('Out out rounds , finish game')
+            Alert.alert('Out of rounds , game is finished .')
             
             this.stopCountdownTimer();
-            fireStoreHelper.finishGame({
+            await fireStoreHelper.finishGame({
                 game_id:this.game.game_id
             })
             return ;
@@ -257,15 +283,9 @@ class GameStore{
         // pick random quiz from this round : 
         let quiz= data.quiz!==undefined ? data.quiz:this.pick_random_quiz;
         let timer =this.game.countdown_timer;
-        if (data.quiz===null) Alert.alert('Pick random quiz  : '+quiz.quiz_index)
-            else Alert.alert('You chosen quiz  : '+quiz.quiz_index)
+        if (data.quiz===undefined) Alert.alert('Times is up, next quiz is quiz  : '+quiz.quiz_index+'.')
+            else Alert.alert('Solver : '+gameStore.current_quiz.solved_by_user_name+' chosen quiz  : '+quiz.quiz_index+'.')
 
-        await fireStoreHelper.chooseQuiz({
-            game_id:this.game.game_id,
-            round_index:round_index,
-            quiz_index:quiz.quiz_index,
-            is_picked_by_user_id:data.is_picked_by_user_id!==undefined ?data.is_picked_by_user_id:null
-        })
 
         let date =new Date();
         await fireStoreHelper.updateCountdownTimer({
@@ -275,6 +295,13 @@ class GameStore{
             duration:timer.durations.answer_quiz,
             update_by_user_id:userStore.user.user_id
         });
+
+        await fireStoreHelper.chooseQuiz({
+            game_id:this.game.game_id,
+            round_index:round_index,
+            quiz_index:quiz.quiz_index,
+            is_picked_by_user_id:data.is_picked_by_user_id!==undefined ?data.is_picked_by_user_id:null
+        })
     }
 
     @action switchToAnswerKeyword=async()=>{
@@ -283,7 +310,7 @@ class GameStore{
             round_index:this.current_round.round_index,
             quiz_index:-1
         })
-        Alert.alert('Time to guess keyword ')
+        Alert.alert('All quizzes were picked, now guessing keyword : .')
 
         let timer =this.game.countdown_timer;
         let date =new Date();
@@ -300,7 +327,8 @@ class GameStore{
     @action updateCountdownTimer=()=>{
         //if someone updated timer to next stage before ,stop now ;
         let timer =this.game.countdown_timer
-        if (timer.update_by_user_id!==-1) return ;
+        if (timer.update_by_user_id!==-1
+            && timer.type!=='choose_team') return ;
         
         // stages when time out  : 
         //choose_team 
@@ -310,6 +338,23 @@ class GameStore{
         //=> (when run out rounds ) finish game 
         switch (timer.type){
             case 'choose_team':{
+                if (this.user_team_index===-1){
+                    if (this.pick_random_team===-1){
+                        Alert.alert('All teams are full,join as viewer ...')
+                    }
+                    else {
+                        let team_index=this.pick_random_team;
+                        fireStoreHelper.chooseTeam({
+                            game_id:gameStore.game.game_id,
+                            user:userStore.user,
+                            team_index:team_index
+                        })
+                        Alert.alert('You is invited to team :'+team_index+'.')
+                    }
+                }
+                else {
+                    Alert.alert('You are in team :'+gameStore.user_team_index+'.')
+                }
                 this.switchToAnswerQuiz({
                     next_round:false,
                 }) 
@@ -317,7 +362,7 @@ class GameStore{
             }
 
             case 'answer_quiz':{
-                if (this.pick_random_quiz===null) {
+                if (this.out_of_quizzes) {
                    this.switchToAnswerKeyword()
                 }
                 else {
@@ -362,19 +407,24 @@ class GameStore{
     @action startCountdownTimer(data){
         this.stopCountdownTimer();
 
+        //check A is choose quiz but time is up and B is person that update count down timer for answering quiz
+        //=> choose_quiz modal on screen of A is not closed 
+        //=> insert this checking to close this modal on all client when enter new answer quiz 
+        if (data.type==='answer_quiz') uIStore.closeChooseQuizModal();
+
+
         this.is_running_timer=true
 
         let date1=new Date(data.start_at);
         let date2=new Date();
         console.log('date1 :',date1.toString())
         console.log('date2 :',date2.toString())
-        let second1=date1.getMilliseconds()/1000+data.duration;
-        let second2=date2.getMilliseconds()/1000;
+        let second1=date1.getTime()/1000+data.duration;
+        let second2=date2.getTime()/1000;
 
         console.log('second1 :',second1);
         console.log('second2 :',second2)
-        this.remaining_time=Math.floor(second1-second2); 
-
+        this.remaining_time=Math.floor((second1-second2)*1.1); 
         this.countDown();
 
     }

@@ -57,37 +57,23 @@ export default class ChooseTeamScreen extends Component{
     
     goToGame=()=>{
         if (!gameStore.enable_join_game) {
-            Alert.alert('Not till time to start game ...')
+            Alert.alert('Game will start soon ...')
         }
         else {
             this.props.navigation.navigate('game')
         }
     }
 
-    autoChooseTeam=async ()=>{
-        if (gameStore.user_team_index===-1){
-            console.log('pickRandomTeam :',gameStore.pick_random_team)
-            if (gameStore.pick_random_team===-1){
-                Alert.alert('all team is full, join as viewer ')
-            }
-            else {
-                await this.chooseTeam(gameStore.pick_random_team)
-                Alert.alert('You automatically pick on team :')
-            }
-        }
-        else {
-            Alert.alert('you are in team :')
-        }
-    }
+   
 
     chooseTeam=async (team_index)=>{
         if (gameStore.enable_join_game){
-            Alert.alert("Game started ,can't choose team")
+            Alert.alert("Game started ,can't choose team anymore")
             return ;
         }
         console.log('chooseTeam :',team_index)
         if (gameStore.user_team_index!==-1){
-            Alert.alert('You are in a team')
+            Alert.alert('You are in  team '+gameStore.user_team_index)
         }
         else 
         if (length(gameStore.game.teams[team_index].members)
@@ -99,7 +85,7 @@ export default class ChooseTeamScreen extends Component{
                 })
             }
         else {
-                Alert.alert('Users count reach limit...')
+                Alert.alert('Members number reached limit...')
             }
         console.log('members length :',length(gameStore.game.teams[team_index].members))
         console.log('max_member :',gameStore.game.teams[team_index].max_members)
@@ -134,9 +120,12 @@ export default class ChooseTeamScreen extends Component{
 
                 <HeaderText label='Teams'/>
                 <View style={{width:'100%',justifyContent:'center',alignItems:'center'}} >
-                    { gameStore.enable_join_game ?
-                        <Text>Game started </Text>
-                        : <RemainTime/>
+                    { 
+                        gameStore.is_game_finished?
+                        <Text>Game finished</Text>
+                        :gameStore.enable_join_game ?
+                            <Text>Game started </Text>
+                            : <RemainTime/>
                     }
                 </View>
 

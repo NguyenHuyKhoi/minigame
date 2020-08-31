@@ -32,11 +32,11 @@ export default class LoginScreen extends Component{
 
     validateUserInputs=()=>{
         if (this.state.user_name===''){
-            Alert.alert('user_name empty')
+            Alert.alert('User name is empty .')
             return false;
         }
         else  if (this.state.password===''){
-            Alert.alert('Password empty')
+            Alert.alert('Password is empty .')
             return false;
         }
         return true;
@@ -56,10 +56,10 @@ export default class LoginScreen extends Component{
         if (this.validateUserInputs()){
             var result=await fireStoreHelper.loginUser(this.state.user_name,this.state.password);
             if (!result) {
-                Alert.alert('Login failed');
+                Alert.alert('Login failed . ');
             }
             else {
-                Alert.alert('Login successfully')
+                Alert.alert('Login successfully .')
                 this.props.navigation.navigate('home')
             }
         }

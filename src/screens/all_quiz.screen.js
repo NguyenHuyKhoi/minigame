@@ -65,12 +65,12 @@ export default class AllQuizScreen extends Component{
 
     sendKeywordAnswer=async ()=>{
         if (this.state.keyword_answer===''){
-             Alert.alert('answer is empty ');
+             Alert.alert('Answer is empty .');
             return 
         }
 
         let keyword_answer=this.state.keyword_answer
-
+        uIStore.closeKeywordAnswerModal()
         console.log('keywordAnswer ',keyword_answer)
         await fireStoreHelper.sendKeywordAnswer({
             game_id:gameStore.game.game_id,
@@ -81,11 +81,10 @@ export default class AllQuizScreen extends Component{
             user:userStore.user
         });
 
-         Alert.alert('Submit keyword answer successfully:',keyword_answer);
 
-         this.closeKeywordAnswerModal()
+ 
         if (gameStore.current_round.keyword.correct_answer.toUpperCase()===keyword_answer.toUpperCase()){
-             Alert.alert("Correct Keyword answer ...")
+            Alert.alert("Correct Keyword answer .Your team earned "+gameStore.score_of_keyword+" pts .")
             await fireStoreHelper.confirmKeywordSolver({
                 game_id:gameStore.game.game_id,
                 round_index:gameStore.current_round.round_index,
@@ -112,7 +111,7 @@ export default class AllQuizScreen extends Component{
             
         }
         else {
-             Alert.alert("wrong answer ...")
+             Alert.alert("Wrong keyword answer ...")
         }
 
      

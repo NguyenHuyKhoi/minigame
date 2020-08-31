@@ -41,7 +41,7 @@ export default class HomeScreen extends Component{
 
     joinGame=async (enable_join,game)=>{
         if (!enable_join){
-            Alert.alert('It is not till start time ...')
+            Alert.alert('It is not till time to join game ...')
             return 
         } 
         else {
@@ -53,6 +53,10 @@ export default class HomeScreen extends Component{
                 fireStoreHelper.listenCountdownTimerChange({
                     game_id:game.game_id,
                 })
+                // fireStoreHelper.listenQuizSolver({
+                //     game_id:game.game_id,
+                //     round_index:gameStore.game.current_round_index
+                // })
                 this.props.navigation.navigate('choose_team')
                 }
                 ,1000);
@@ -74,7 +78,7 @@ export default class HomeScreen extends Component{
     render(){
         return (
             <View style={styles.container}>
-                <View style={{position:'absolute',right:0,top:0}}>
+                <View style={{position:'absolute',right:20,top:0}}>
                     <Button custom_width={100}
                         onPress={()=>this.signOut()}
                         label="Sign Out"/>

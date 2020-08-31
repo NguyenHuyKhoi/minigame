@@ -14,7 +14,7 @@ import HeaderText from './header_text.component'
 class TextRow extends Component{
     render(){
         return (
-            <Text style={{fontSize:16,fontWeight:'bold',marginVertical:2,alignContent:'flex-start'}}>{this.props.text}</Text>
+            <Text style={{fontSize:18,fontWeight:'bold',marginVertical:2,alignContent:'flex-start'}}>{this.props.text}</Text>
         )
     }
 }
@@ -26,21 +26,17 @@ export default class RuleModal extends Component{
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={this.props.visible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}>
+                visible={this.props.visible}>
                 <View style={styles.container}>
                     <View style={styles.modal_view}>
                         <View style={styles.body}>
                             <HeaderText label='Rules'/>
-                            <TextRow text={'Score for per quiz     : '+score.score_per_quiz+' pts'}/>
-                            <TextRow text={'If you chosen this quiz : '+score.score_per_picked_quiz+' pts'}/>
-                            <TextRow text={'Score for keyword : '+
+                            <TextRow text={'Quiz     : '+score.score_per_quiz+' pts'}/>
+                            <TextRow text={'If picked by solver : '+score.score_per_picked_quiz+' pts'}/>
+                            <TextRow text={'Keyword : '+
                                 score.score_for_finally_guess_keyword+' + '+
-                                score.bonus_per_quiz_on_guessing_keyword_early +' * unanswered quiz number '+' pts'}/>
-                            <TextRow text={'But if guessing it wrong, you must be stop round'}/>
-                            <TextRow text={'Score of team is total of all members on all rounds '}/>
+                                score.bonus_per_quiz_on_guessing_keyword_early +' * remain quizzes '+' pts'}/>
+                            <TextRow text={'Answer : 1 time / quiz (or keyword) / member'}/>
                             <TextRow text={'Team with higher score will win .... '}/>
                             
                         </View>

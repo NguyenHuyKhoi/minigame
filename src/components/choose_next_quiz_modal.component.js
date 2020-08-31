@@ -47,10 +47,7 @@ export default class ChooseNextQuizModal extends Component{
             <Modal
                 animationType="slide"
                 transparent={this.props.visible}
-                visible={this.props.visible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}>
+                visible={this.props.visible}>
                 <View style={styles.container}>
                     <View style={styles.modal_view}>
                         <View style={styles.header}>

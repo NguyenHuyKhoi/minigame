@@ -65,9 +65,8 @@ export default class ChatScreen extends Component{
 
     
     sendMessage=async ()=>{
-        Alert.alert('Send message :',this.state.message);
         if (this.state.message===''){
-            Alert.alert('message is empty ');
+            Alert.alert('Message is empty .');
         }
         else {
            await fireStoreHelper.sendMessage({

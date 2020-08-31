@@ -74,11 +74,21 @@ class FireStoreHelper {
         })
     }
 
+    // listenQuizSolver=async(filter)=>{
+    //     this.db.ref('games/'+filter.game_id+'/rounds/'+filter.round_index)
+    //         .on('child_changed',snapshot=>{
+    //             if (snapshot.key!=='current_quiz_index') return ;
+    //             console.log('Current_quiz_index changed data :',snapshot.val());
+    //            // this.db.ref('games/'+filter.game_id+'/rounds/'+filter.round_index+)
+    //         })
+    // }
+
     listenCountdownTimerChange=async(filter)=>{
         await this.db.ref('games/'+filter.game_id+'/countdown_timer/')
             .on('value',snapshot=>{
                 const data=snapshot.val();
-
+                if (gameStore.game.is_finished!==undefined
+                    && gameStore.game.is_finished===true) return;
                 if (data.type==='not_start_by_anyone') {
                     // no one join game before ,so this user can start count-down timer for choosing team :
                     let date =new Date();
@@ -94,7 +104,7 @@ class FireStoreHelper {
                 }
                 else 
                 // not reset update_by_user_id action
-                if (data.update_by_user_id!==-1){
+                if (data.update_by_user_id!==-1 ){
                     gameStore.startCountdownTimer(data)
                 }
 
@@ -170,7 +180,7 @@ class FireStoreHelper {
             .update({
                 is_solved:true,
                 solved_by_user_id:data.user.user_id,
-                solver_by_user_name:data.user.user_name,
+                solved_by_user_name:data.user.user_name,
                 solved_by_team_index:data.team_index,
                 solved_by_team_name:data.team_name
             })
@@ -251,7 +261,8 @@ class FireStoreHelper {
                 start_at:data.start_at
             })
 
-        setTimeout(()=>{
+        if (data.type!=='choose_team')
+            setTimeout(()=>{
                 this.resetUpdateByUserIdValue({
                     game_id:gameStore.game.game_id,
                     update_by_user_id:-1

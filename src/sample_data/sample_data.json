@@ -6,13 +6,13 @@
         "team_number":2,
         "join_code":"23123",
         "current_round_index":0,
-        "enable_start":"2020-08-21T14:16:10+07:00",
+        "enable_start":"2020-08-31T10:31:10+07:00",
         "countdown_timer":{
             "durations":{
-                "choose_team":10,
-                "answer_quiz":25,
-                "choose_quiz":20,
-                "answer_keyword":35
+                "choose_team":25,
+                "answer_quiz":30,
+                "choose_quiz":12,
+                "answer_keyword":30
             },
             "start_at":-1,
             "duration":-1,
@@ -28,124 +28,27 @@
         "chats":[
             {
                 "chat_type":"team",
-                "team_index":0,
-                "messages":[
-                    {
-                        "message_time":"2020-08-21T14:16:10+07:00",
-                        "content":"I am user1",
-                        "user_name":"user1",
-                        "team_index":0,
-                        "user_id":1
-                    },
-                    {
-                        "message_time":"2020-08-21T15:16:10+07:00",
-                        "content":"I am user2",
-                        "user_name":"user2",
-                        "team_index":0,
-                        "user_id":2
-                    },
-                    {
-                        "message_time":"2020-08-21T22:18:10+07:00",
-                        "content":"I am user0",
-                        "user_name":"user0",
-                        "team_index":0,
-                        "user_id":0
-                    },
-                    {
-                        "message_time":"2020-08-21T13:18:19+07:00",
-                        "content":"hellow",
-                        "user_name":"user0",
-                        "team_index":0,
-                        "user_id":0
-                    },
-                    {
-                        "message_time":"2020-08-21T18:54:10+07:00",
-                        "content":"hello again",
-                        "user_name":"user0",
-                        "team_index":0,
-                        "user_id":0
-                    }
-                ]
+                "team_index":0
             },
             {
                 "chat_type":"team",
-                "team_index":1,
-                "messages":[
-            
-                ]
+                "team_index":1
             },
             {
                 "chat_type":"all",
-                "team_index":-1,
-                "messages":[
-                    {
-                        "message_time":"2020-08-21T18:54:10+07:00",
-                        "content":"I am in team 0",
-                        "user_name":"user0",
-                        "user_id":0,
-                        "team_index":0
-                    },
-                    {
-                        "message_time":"2020-08-21T12:04:10+07:00",
-                        "content":"I am in team 1",
-                        "user_name":"user4",
-                        "user_id":4,
-                        "team_index":1
-                    },
-                    {
-                        "message_time":"2020-08-21T19:07:10+07:00",
-                        "content":"I am in team 1",
-                        "user_name":"user3",
-                        "user_id":3,
-                        "team_index":1
-                    }
-                ]
+                "team_index":-1
             }
         ],
         "teams":[
             {
                 "team_index":0,
                 "team_name":"TeamA",
-                "max_members":4,
-                "members":[
-                    {
-                        "member_index":0,
-                        "user_id":0,
-                        "user_name":"user0",
-                        "score":0
-                    },
-                    {
-                        "member_index":1,
-                        "user_id":2,
-                        "user_name":"user2",
-                        "score":0
-                    }
-                ]
+                "max_members":4
             },
             {
                 "team_index":1,
                 "team_name":"TeamB",
-                "max_members":4,
-                "members":[
-                    {
-                        "member_index":0,
-                        "user_id":3,
-                        "user_name":"user3",
-                        "score":0
-                    },
-                    {
-                        "member_index":1,
-                        "user_id":4,
-                        "user_name":"user4",
-                        "score":0
-                    },
-                    {
-                        "member_index":2,
-                        "user_id":5,
-                        "user_name":"user5",
-                        "score":0
-                    }
-                ]
+                "max_members":4
             }
         ],
         "rounds":[
@@ -159,16 +62,7 @@
                         "quiz_index":0,
                         "content":"What is social unit of people that is structured and managed to meet a need or to pursue collective goals",
                         "correct_answer":"Organization",
-                        "answers":[
-                            {
-                                "answer_index":0,
-                                "content":"Organ",
-                                "team_index":0,
-                                "user_id":2,
-                                "user_name":"user2",
-                                "answer_time":"390"
-                            }
-                        ],
+              
                         "is_picked":false,
                         "is_solved":false,
                         "solved_by_user_id":"",
@@ -206,30 +100,8 @@
                     "correct_answer":"UNICEF",
                     "is_solved":false,
                     "solved_by_user_id":"",
-                    "solved_by_team_index":"",
-                    "answers":[{
-                        "answer_index":0,
-                        "content":"Organ",
-                        "team_index":0,
-                        "user_id":2,
-                        "user_name":"user2"
-                    },
-                    {
-                        "answer_index":1,
-                        "content":"UTO",
-                        "team_index":1,
-                        "user_id":4,
-                        "user_name":"user4"
-                    },
-                    {
-                        "answer_index":2,
-                        "content":"UNICEF",
-                        "team_index":1,
-                        "user_id":5,
-                        "user_name":"user5"
-                    }
-                ]
-
+                    "solved_by_team_index":""
+                  
                 },
                 "hint_image":{
                     "piece_number":4,
@@ -385,14 +257,14 @@
             "round_number":2,
             "team_number":2,
             "join_code":"23123",
-            "enable_start":"2020-08-21T14:16:10+07:00"
+            "enable_start":"2020-08-31T10:31:10+07:00"
         },
         {
             "game_id":1,
             "round_number":4,
             "team_number":2,
             "join_code":"23123",
-            "enable_start":"2020-08-27T11:33:10+07:00"
+            "enable_start":"2020-08-27T11:35:10+07:00"
         },
         {
             "game_id":2,

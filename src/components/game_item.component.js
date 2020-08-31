@@ -24,6 +24,10 @@ export default class GameItem extends Component{
             let date1=new Date();
             let time1=date1.getTime();
     
+            console.log('Date1 on GameItem :',date2);
+            console.log('Date2 on GameItem :',date1);
+            console.log('Second1 on GameItem :',time2);
+            console.log('Second2 on GameItem :',time1);
             let second=Math.floor((time2-time1)/1000)
             if (second<=0) 
                 {

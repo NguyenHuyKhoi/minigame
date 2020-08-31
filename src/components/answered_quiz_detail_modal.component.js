@@ -20,10 +20,7 @@ export default class AnswerQuizDetailModal extends Component{
             <Modal
                 animationType="slide"
                 transparent={true}
-                visible={this.props.visible}
-                onRequestClose={() => {
-                    Alert.alert("Modal has been closed.");
-                }}>
+                visible={this.props.visible}>
                 <View style={styles.container}>
                     <View style={styles.modal_view}>
                         <View style={styles.body}>

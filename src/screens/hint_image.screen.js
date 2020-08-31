@@ -29,6 +29,16 @@ export default class HintImageScreen extends Component{
     constructor(props){
         super(props)
         Orientation.lockToLandscape()
+        this.state={
+            hint_image: HIDDEN_IMG
+    }
+    }
+    componentDidMount=()=>{
+        this.setState({
+            hint_image:{
+                uri:gameStore.current_round.hint_image.url
+            }
+        })
     }
     render(){
         const hint_image=gameStore.current_round.hint_image;
@@ -37,8 +47,8 @@ export default class HintImageScreen extends Component{
         return (
             <View style={styles.container}>
                 {
-                    hint_image.url!==null?
-                        <ImageBackground style={[styles.image,{backgroundColor:'red'}]}
+                    hint_image.url!==undefined?
+                        <ImageBackground style={[styles.image]}
                             source={{uri:hint_image.url}}>
                             <FlatList
                                 data={hint_image.piece_status}   

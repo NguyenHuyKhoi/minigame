@@ -30,11 +30,11 @@ export default class RegisterScreen extends Component{
     
     validateUserInputs=()=>{
         if (this.state.user_name===''){
-            Alert.alert('user_name empty')
+            Alert.alert('User name is  empty . ')
             return false;
         }
         else  if (this.state.password===''){
-            Alert.alert('Password empty')
+            Alert.alert('Password is empty .')
             return false;
         }
         return true;
@@ -44,10 +44,10 @@ export default class RegisterScreen extends Component{
         if (this.validateUserInputs()){
             var user=await fireStoreHelper.registerUser(this.state.user_name,this.state.password);
             if (user===null){
-                Alert.alert('sign in failed ')
+                Alert.alert('Register failed . ')
             }
             else {
-                Alert.alert('Sign in successfully')
+                Alert.alert('Register successfully .')
                 this.props.navigation.navigate('login')
             }
         }
